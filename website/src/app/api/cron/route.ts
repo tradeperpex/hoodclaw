@@ -1,0 +1,61 @@
+import { NextResponse } from "next/server";
+import { runCycle } from "@/lib/agent/run";
+import { saveAgentCycle, getStats } from "@/lib/agent/db";
+import { generateThoughtForCycle } from "@/lib/agent/thought";
+
+export const maxDuration = 60;
+export const dynamic = "force-dynamic";
+
+export async function GET(request: Request) {
+  const authHeader = request.headers.get("authorization");
+  if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  try {
+    const result = await runCycle();
+    console.log("Cron result:", JSON.stringify(result));
+
+    if (result.ok) {
+      const isSkipped = "skipped" in result && result.skipped;
+      const stats = await getStats();
+      const strategy = "strategy" in result ? result.strategy : undefined;
+
+      const thought = await generateThoughtForCycle({
+        claimed: "claimed" in result ? result.claimed : undefined,
+        boughtBackSol: "boughtBackSol" in result ? result.boughtBackSol : undefined,
+        burnedTokens: "burnedTokens" in result ? result.burnedTokens : undefined,
+        lpSol: "lpSol" in result ? result.lpSol : undefined,
+        treasurySol: result.treasurySol,
+        skipped: isSkipped,
+        totalClaimed: stats?.total_claimed ?? 0,
+        totalBurned: stats?.total_burned ?? 0,
+        totalBoughtBack: stats?.total_bought_back ?? 0,
+        strategy,
+      });
+
+      console.log(`[thought] "${thought.text}"`);
+
+      await saveAgentCycle({
+        claimed: "claimed" in result ? result.claimed : undefined,
+        creatorShare: "creatorShare" in result ? result.creatorShare : undefined,
+        boughtBackSol: "boughtBackSol" in result ? result.boughtBackSol : undefined,
+        burnedTokens: "burnedTokens" in result ? result.burnedTokens : undefined,
+        lpSol: "lpSol" in result ? result.lpSol : undefined,
+        treasurySol: result.treasurySol,
+        skipped: isSkipped,
+        thought: thought.text,
+        strategy,
+        txs: "txs" in result ? result.txs : undefined,
+      });
+
+      return NextResponse.json({ ok: true, result });
+    }
+
+    return NextResponse.json(result);
+  } catch (err) {
+    console.error("[Cron] Fejl:", err);
+    const msg = err instanceof Error ? err.message : "Unknown error";
+    return NextResponse.json({ ok: false, error: msg }, { status: 500 });
+  }
+}

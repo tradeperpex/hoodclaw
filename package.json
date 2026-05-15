@@ -1,0 +1,10 @@
+{
+  "name": "singleclaw-root",
+  "private": true,
+  "scripts": {
+    "install": "cd website && npm install",
+    "dev": "cd website && npm run dev",
+    "build": "cd website && npm run build",
+    "start": "cd website && npm run start"
+  }
+}
