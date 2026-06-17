@@ -24,6 +24,24 @@ export function hasKieApiKey(): boolean {
 }
 
 /**
+ * Nogle modeller (fx gpt-5-2 via Kie) pakker svaret ind i en markdown
+ * container-directive som `:::writing{variant="standard" id="123"} ... :::`.
+ * Det skal aldrig vises råt, så vi stripper directive-fences og evt.
+ * code-fence wrappers fra modellens output.
+ */
+export function sanitizeModelText(text: string): string {
+  return text
+    // fjern container-directive åbnere: :::writing{...}, :::note, ::: osv.
+    .replace(/:::+\s*[a-zA-Z][\w-]*\s*(\{[^}]*\})?/g, "")
+    // fjern resterende ::: fences
+    .replace(/:::+/g, "")
+    // fjern omsluttende ``` code fences hvis modellen brugte dem
+    .replace(/^\s*```[a-zA-Z]*\s*/g, "")
+    .replace(/\s*```\s*$/g, "")
+    .trim();
+}
+
+/**
  * POST /v1/chat/completions — returnerer assistant-tekst eller null hvis ingen key / tom svar.
  */
 export async function kieChatCompletions(
@@ -58,5 +76,7 @@ export async function kieChatCompletions(
   }
 
   const text = data.choices?.[0]?.message?.content?.trim();
-  return text || null;
+  if (!text) return null;
+  const cleaned = sanitizeModelText(text);
+  return cleaned || null;
 }

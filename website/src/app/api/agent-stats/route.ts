@@ -1,14 +1,21 @@
 import { NextResponse } from "next/server";
 import { getAgentStats } from "@/lib/agent-db";
+import { sanitizeModelText } from "@/lib/agent/kie";
+
+type FeedEntry = { time?: string; action?: string; detail?: string; sig?: string; strategy?: string };
 
 /** Henter agent-data fra Supabase. Opdateres når du kører npm run buyback i agent/. */
 export async function GET() {
   try {
     const db = await getAgentStats();
+    const rawFeed: FeedEntry[] = Array.isArray(db?.feed_entries) ? db.feed_entries : [];
+    const feedEntries = rawFeed.map((e) =>
+      e?.detail ? { ...e, detail: sanitizeModelText(e.detail) } : e,
+    );
     const json = {
-      thought: db?.thought ?? "Waiting for fees.",
+      thought: db?.thought ? sanitizeModelText(db.thought) : "Waiting for fees.",
       thoughtMeta: db?.thought_meta ?? "— OnlyClaw",
-      feedEntries: db?.feed_entries ?? [],
+      feedEntries,
       updatedAt: db?.updated_at ?? null,
       stats: {
         treasurySol: db?.treasury_sol ?? 0,
