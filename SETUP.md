@@ -1,4 +1,4 @@
-# SingleClaw setup
+# OnlyClaw setup
 
 ## 1. Supabase
 

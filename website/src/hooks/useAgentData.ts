@@ -32,7 +32,7 @@ export function useAgentData(): AgentState {
 
   const empty: AgentState = {
     thought: error ? `Error: ${error}` : "Waiting for fees.",
-    thoughtMeta: "— SingleClaw",
+    thoughtMeta: "— OnlyClaw",
     feedEntries: [],
     updatedAt: null,
     stats: {

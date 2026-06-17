@@ -1,5 +1,5 @@
 /**
- * SingleClaw agent – core cycle logic.
+ * OnlyClaw agent – core cycle logic.
  * Én autonom agent: claim fees → 100% buyback + burn (+ LP hvis migrated).
  */
 

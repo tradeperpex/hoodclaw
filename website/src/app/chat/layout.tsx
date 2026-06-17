@@ -1,7 +1,7 @@
 import HomeHeader from "@/components/HomeHeader";
 
 export const metadata = {
-  title: "Chat — SingleClaw",
+  title: "Chat — OnlyClaw",
   description: "Talk to CLAW, the autonomous agent managing the token.",
 };
 

@@ -1,8 +1,8 @@
-# SingleClaw – ideen
+# OnlyClaw – ideen
 
-**Navn:** SingleClaw (single + claw)
+**Navn:** OnlyClaw (only + claw)
 
-**Koncept:** Én autonom AI-agent der *styrer en coin alene* – ingen team, ingen multisig, ingen menneskelige beslutninger. Bare én agent med ét greb om token'et.
+**Koncept:** Én autonom AI-agent der *styrer en coin alene* – ingen team, ingen multisig, ingen menneskelige beslutninger. Kun ét greb om token'et: the claw.
 
 - Agenten claimer fees
 - Agenten beslutter allokering
@@ -11,6 +11,6 @@
 - Agenten skriver sin egen tankegang efter hver cyklus
 - Alt synligt for brugeren i real-time
 
-**Single = én agent. Claw = agentens greb om token.**
+**Only = ingen andre, kun agenten. Claw = agentens greb om token.**
 
 **Husk:** Hold det smart, simpelt og fedt. Én agent = klar historie, intet at gemme sig bag.

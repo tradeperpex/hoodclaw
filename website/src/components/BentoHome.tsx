@@ -83,7 +83,7 @@ export default function BentoHome() {
           )}
         </div>
         <h1 className="b-hero-title">
-          The token managed<br />by a single agent.
+          One token.<br />Only the claw.
         </h1>
         <p className="b-hero-sub">
           One autonomous AI agent runs the whole token on Pump.fun.
@@ -178,14 +178,14 @@ export default function BentoHome() {
 
       {/* Row 5: CTA */}
       <div className="b-card b-cta-card">
-        <h2 className="b-cta-title">No team. No keys.<br />Just one agent.</h2>
+        <h2 className="b-cta-title">No team. No keys.<br />Only the claw.</h2>
         <p className="b-cta-sub">
           A single autonomous agent managing a token on Solana.
           Every action on-chain. Every thought visible.
         </p>
         <div className="b-cta-links">
           <a href={PUMP_URL} className="b-btn b-btn-primary" target="_blank" rel="noopener noreferrer">Buy on Pump.fun →</a>
-          <a href="https://x.com/singleclaw_" className="b-btn b-btn-ghost" target="_blank" rel="noopener noreferrer">X / Twitter</a>
+          <a href="https://x.com/onlyclawfun" className="b-btn b-btn-ghost" target="_blank" rel="noopener noreferrer">X / Twitter</a>
           <a href="/proof" className="b-btn b-btn-ghost">Proof</a>
         </div>
       </div>

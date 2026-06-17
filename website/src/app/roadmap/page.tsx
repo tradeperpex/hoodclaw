@@ -1,6 +1,6 @@
 export const metadata = {
-  title: "Roadmap — SingleClaw",
-  description: "What we've built, what's next, and where SingleClaw is heading.",
+  title: "Roadmap — OnlyClaw",
+  description: "What we've built, what's next, and where OnlyClaw is heading.",
 };
 
 interface Phase {

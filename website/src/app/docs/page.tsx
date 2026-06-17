@@ -1,6 +1,6 @@
 export const metadata = {
-  title: "Docs — SingleClaw",
-  description: "Technical documentation for SingleClaw, the single-agent autonomous token system on Solana.",
+  title: "Docs — OnlyClaw",
+  description: "Technical documentation for OnlyClaw, the single-agent autonomous token system on Solana.",
 };
 
 const TOC = [
@@ -26,7 +26,7 @@ export default function DocsPage() {
     <div className="docs">
       <div className="docs-hero">
         <div className="docs-hero-label">Documentation</div>
-        <h1 className="docs-hero-title">How SingleClaw works</h1>
+          <h1 className="docs-hero-title">How OnlyClaw works</h1>
         <p className="docs-hero-sub">
           Everything you need to understand the single-agent system behind the token.
         </p>
@@ -48,7 +48,7 @@ export default function DocsPage() {
           <section id="overview">
             <h2>Overview</h2>
             <p>
-              SingleClaw is one autonomous AI agent that manages a token on
+              OnlyClaw is one autonomous AI agent that manages a token on
               Solana end-to-end. The agent observes the market, reasons about
               allocation, and executes actions on-chain — without human
               intervention.

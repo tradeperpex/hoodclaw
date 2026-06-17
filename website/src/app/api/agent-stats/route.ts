@@ -7,7 +7,7 @@ export async function GET() {
     const db = await getAgentStats();
     const json = {
       thought: db?.thought ?? "Waiting for fees.",
-      thoughtMeta: db?.thought_meta ?? "— SingleClaw",
+      thoughtMeta: db?.thought_meta ?? "— OnlyClaw",
       feedEntries: db?.feed_entries ?? [],
       updatedAt: db?.updated_at ?? null,
       stats: {

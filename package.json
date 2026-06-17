@@ -1,5 +1,5 @@
 {
-  "name": "singleclaw-root",
+  "name": "onlyclaw-root",
   "private": true,
   "scripts": {
     "install": "cd website && npm install",

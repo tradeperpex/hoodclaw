@@ -3,8 +3,8 @@ import "./globals.css";
 import SmoothScroll from "@/components/SmoothScroll";
 
 export const metadata: Metadata = {
-  title: "SingleClaw",
-  description: "One agent. One token. Full autonomy.",
+  title: "OnlyClaw",
+  description: "One agent. One token. Only the claw.",
 };
 
 export default function RootLayout({

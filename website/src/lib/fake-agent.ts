@@ -90,8 +90,8 @@ export function getFakeAgentState(cyclesCompleted: number): AgentState {
 
   const thoughtMeta =
     cyclesCompleted > 0
-      ? `— SingleClaw, cycle ${cyclesCompleted}`
-      : "— SingleClaw";
+      ? `— OnlyClaw, cycle ${cyclesCompleted}`
+      : "— OnlyClaw";
 
   return {
     thought: latestThought,
