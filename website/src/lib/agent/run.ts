@@ -4,7 +4,7 @@
  */
 
 import { Connection, ComputeBudgetProgram, Keypair, PublicKey, Transaction } from "@solana/web3.js";
-import { getAssociatedTokenAddressSync, TOKEN_2022_PROGRAM_ID, createBurnInstruction, getAccount } from "@solana/spl-token";
+import { getAssociatedTokenAddressSync, TOKEN_2022_PROGRAM_ID, createBurnInstruction, getAccount, NATIVE_MINT } from "@solana/spl-token";
 import BN from "bn.js";
 import { OnlinePumpSdk, getBuyTokenAmountFromSolAmount, PUMP_SDK } from "@pump-fun/pump-sdk";
 import * as PumpSwap from "@pump-fun/pump-swap-sdk";
@@ -219,6 +219,7 @@ async function doBuyback(
       mintSupply: bondingCurve.tokenTotalSupply,
       bondingCurve,
       amount: solBn,
+      quoteMint: NATIVE_MINT,
     });
     const buyIx = await PUMP_SDK.buyInstructions({
       global,
