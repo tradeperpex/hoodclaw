@@ -1,5 +1,5 @@
 {
-  "name": "onlyclaw",
+  "name": "agentclaw",
   "version": "1.0.0",
   "private": true,
   "scripts": {
@@ -9,6 +9,7 @@
   },
   "type": "module",
   "dependencies": {
+    "@coral-xyz/anchor": "^0.32.1",
     "@gsap/react": "^2.1.2",
     "@pump-fun/pump-sdk": "^1.36.0",
     "@pump-fun/pump-swap-sdk": "^1.17.0",

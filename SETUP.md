@@ -1,71 +1,58 @@
-# OnlyClaw setup
+# AgentClaw setup
 
 ## 1. Supabase
 
-1. Opret projekt på [supabase.com](https://supabase.com)
-2. Gå til SQL Editor og kør:
+1. Create a project at [supabase.com](https://supabase.com)
+2. Open **SQL Editor** → **New query**
+3. Paste and run the entire contents of [`supabase/schema.sql`](supabase/schema.sql)
+4. Copy from **Settings → API**:
+   - Project URL → `NEXT_PUBLIC_SUPABASE_URL`
+   - `anon` `public` key → `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+   - `service_role` `secret` key → `SUPABASE_SERVICE_ROLE_KEY`
 
-```sql
-create table if not exists agent_stats (
-  id text primary key default 'default',
-  total_claimed numeric default 0,
-  total_creator_share numeric default 0,
-  total_burned numeric default 0,
-  total_bought_back numeric default 0,
-  total_lp_sol numeric default 0,
-  treasury_sol numeric default 0,
-  thought text default '',
-  thought_meta text default '',
-  feed_entries jsonb default '[]',
-  last_run_at timestamptz,
-  updated_at timestamptz default now()
-);
+The schema creates one table (`agent_stats`), seeds a default row, and enables public read-only access. The agent cron writes via `service_role`.
 
-alter table agent_stats enable row level security;
-create policy "Allow public read" on agent_stats for select using (true);
+## 2. Environment
+
+```bash
+cp website/.env.example website/.env.local
 ```
 
-3. Kopiér URL, anon key og service_role key fra Settings → API
+Fill in every value in `website/.env.local`. Required for the agent to run:
 
-## 2. Install
+| Variable | What |
+|----------|------|
+| `AGENT_PRIVATE_KEY` | Base58 secret — must be pump.fun coin creator wallet |
+| `MINT_ADDRESS` | Token mint pubkey |
+| `NEXT_PUBLIC_MINT_ADDRESS` | Same mint (website links) |
+| `NEXT_PUBLIC_SUPABASE_URL` | Supabase project URL |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Supabase anon key |
+| `SUPABASE_SERVICE_ROLE_KEY` | Supabase service role key |
+| `RPC_URL` | Custom Solana RPC (recommended) |
+| `CRON_SECRET` | Any random string locally; Vercel sets this in production |
+
+Optional: `KIE_API_KEY` for AI thoughts + chat. `MIN_CLAIM_SOL` defaults to `0.01`.
+
+## 3. Install & run locally
 
 ```bash
 cd website
 npm install
+npm run dev
 ```
 
-Alt kode (website + agent) lever i `website/` mappen. Agenten kører som Vercel Cron job.
+Test the agent cycle manually (with `CRON_SECRET` set in `.env.local`):
 
-## 3. Vercel env vars
+```bash
+curl -H "Authorization: Bearer YOUR_CRON_SECRET" http://localhost:3000/api/cron
+```
 
-Sæt i Vercel → Settings → Environment Variables:
+## 4. Deploy (Vercel)
 
-| Variable | Beskrivelse |
-|----------|-------------|
-| `NEXT_PUBLIC_CREATOR_ADDRESS` | Din wallet |
-| `NEXT_PUBLIC_MINT_ADDRESS` | Token mint |
-| `MINT_ADDRESS` | Samme som mint |
-| `AGENT_PRIVATE_KEY` | Base58 secret key |
-| `NEXT_PUBLIC_SUPABASE_URL` | Fra Supabase |
-| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Fra Supabase |
-| `SUPABASE_SERVICE_ROLE_KEY` | Fra Supabase (hemmelig) |
-| `CRON_SECRET` | Sættes automatisk af Vercel |
-
-Valgfrit:
-- `RPC_URL` – custom RPC (fx Helius, QuickNode)
-- `KIE_API_KEY` – til AI-genererede agent thoughts
-
-## 4. Deploy
-
-Push til GitHub → Vercel deployer automatisk.
-
-**Vercel root directory:** `website`
-
-Agenten kører automatisk via Vercel Cron (`/api/cron`) hvert 3. minut.
-
-### 429 Too Many Requests?
-Gratis Solana RPC har lav rate limit. Brug fx [Helius](https://helius.dev) (gratis tier) eller QuickNode, og sæt `RPC_URL` i Vercel.
+- **Root directory:** `website`
+- Add all env vars from `website/.env.example`
+- Cron runs `/api/cron` every 3 minutes (see `website/vercel.json`)
 
 ---
 
-**Flow:** Vercel Cron → `/api/cron` → agenten kører claim/buyback/burn/LP → skriver til Supabase → website læser fra Supabase.
+**Flow:** Vercel Cron → `/api/cron` → agent claims fees / buyback / burn / LP on pump.fun → writes to Supabase → website reads via `/api/agent-stats`.

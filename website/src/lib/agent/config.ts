@@ -36,7 +36,11 @@ export type AgentConfig = {
 
 let _config: AgentConfig | null = null;
 
-/** Lazy-loaded so build/SSG doesn't crash when env vars are missing. */
+/**
+ * Lazy-loaded so build/SSG doesn't crash when env vars are missing.
+ * pump.fun / PumpSwap are fully on-chain — no API key required. The agent
+ * wallet is the coin creator and collects its own creator fees.
+ */
 export function getConfig(): AgentConfig {
   if (_config) return _config;
   const rpcRaw = process.env.RPC_URL || process.env.NEXT_PUBLIC_RPC_URL || DEFAULT_RPC;

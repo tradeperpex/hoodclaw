@@ -1,33 +1,31 @@
 /**
- * OnlyClaw agent – core cycle logic.
- * Én autonom agent: claim fees → 100% buyback + burn (+ LP hvis migrated).
+ * AgentClaw agent – core cycle logic.
+ * Én autonom agent: collect creator fees (pump.fun) → 100% buyback + burn
+ * (+ LP via PumpSwap hvis token er graduated til AMM).
+ *
+ * Handel kører direkte on-chain:
+ *  - Bonding curve (pre-graduation): @pump-fun/pump-sdk buy instructions.
+ *  - PumpSwap AMM (post-graduation):  @pump-fun/pump-swap-sdk swap + deposit.
+ * Ingen API-nøgle nødvendig — agent-wallet er coin creator.
  */
 
-import { Connection, ComputeBudgetProgram, Keypair, PublicKey, Transaction } from "@solana/web3.js";
-import { getAssociatedTokenAddressSync, TOKEN_2022_PROGRAM_ID, createBurnInstruction, getAccount, NATIVE_MINT } from "@solana/spl-token";
+import { Connection, ComputeBudgetProgram, Keypair, PublicKey, Transaction, TransactionInstruction } from "@solana/web3.js";
+import {
+  getAssociatedTokenAddressSync,
+  createBurnInstruction,
+  getAccount,
+  NATIVE_MINT,
+  TOKEN_PROGRAM_ID,
+  TOKEN_2022_PROGRAM_ID,
+} from "@solana/spl-token";
 import BN from "bn.js";
-import { OnlinePumpSdk, getBuyTokenAmountFromSolAmount, PUMP_SDK } from "@pump-fun/pump-sdk";
-import * as PumpSwap from "@pump-fun/pump-swap-sdk";
+import { OnlinePumpSdk, PumpSdk, getBuyTokenAmountFromSolAmount } from "@pump-fun/pump-sdk";
+import { OnlinePumpAmmSdk, PumpAmmSdk, canonicalPumpPoolPda } from "@pump-fun/pump-swap-sdk";
 import { getConfig } from "./config";
 
 const LAMPORTS_PER_SOL = 1e9;
-
-const PUMP_PROGRAM_ID = new PublicKey("6EF8rrecthR5Dkzon8Nwu78hRvfCKubJ14M5uBEwF6P");
-const PUMP_AMM_PROGRAM_ID = new PublicKey("pAMMBay6oceH9fJKBRHGP5D4bD4sWpmSwMn52FMfXEA");
-
-function bondingCurveV2Pda(mint: PublicKey): PublicKey {
-  return PublicKey.findProgramAddressSync(
-    [Buffer.from("bonding-curve-v2"), mint.toBuffer()],
-    PUMP_PROGRAM_ID
-  )[0];
-}
-
-function poolV2Pda(baseMint: PublicKey): PublicKey {
-  return PublicKey.findProgramAddressSync(
-    [Buffer.from("pool-v2"), baseMint.toBuffer()],
-    PUMP_AMM_PROGRAM_ID
-  )[0];
-}
+const COMMITMENT = "confirmed" as const;
+const SLIPPAGE_PCT = 5;
 
 function sleep(ms: number): Promise<void> {
   return new Promise((r) => setTimeout(r, ms));
@@ -64,94 +62,91 @@ export type CycleResult =
   | { ok: true; claimed: number; creatorShare: number; boughtBackSol: number; burnedTokens: number; lpSol: number; treasurySol?: number; txs?: TxRecord[]; strategy?: string }
   | { ok: false; error: string };
 
+/** Er token graduated til PumpSwap AMM? (bonding curve complete eller fjernet) */
+async function isGraduated(onlineSdk: OnlinePumpSdk, mint: PublicKey): Promise<boolean> {
+  try {
+    const bc = await onlineSdk.fetchBondingCurve(mint);
+    return bc.complete;
+  } catch {
+    // Ingen bonding curve fundet → antag migreret til AMM.
+    return true;
+  }
+}
+
 export async function runCycle(): Promise<CycleResult> {
   const config = getConfig();
   const connection = new Connection(config.rpcUrl, {
-    commitment: "confirmed",
+    commitment: COMMITMENT,
     confirmTransactionInitialTimeout: 90_000,
   });
   const agent = config.agentKeypair;
-  const sdk = new OnlinePumpSdk(connection);
+  const user = agent.publicKey;
+  const mint = config.mint;
+
+  const onlineSdk = new OnlinePumpSdk(connection);
+  const pumpSdk = new PumpSdk();
+  const onlineAmm = new OnlinePumpAmmSdk(connection);
+  const ammSdk = new PumpAmmSdk();
 
   console.log(`[${new Date().toISOString()}] Starter cyklus...`);
 
-  let balanceSol = 0;
+  // 1. Læs claimbare creator fees (begge programmer: bonding curve + AMM)
+  let claimableLamports = new BN(0);
   try {
-    const balanceLamports = await sdk.getCreatorVaultBalanceBothPrograms(agent.publicKey);
-    balanceSol = balanceLamports.toNumber() / LAMPORTS_PER_SOL;
+    claimableLamports = await onlineSdk.getCreatorVaultBalanceBothPrograms(user);
   } catch (err) {
-    const msg = err instanceof Error ? err.message : String(err);
-    if (msg.includes("TokenAccountNotFoundError") || msg.includes("NotFound")) {
-      balanceSol = 0;
-    } else {
-      throw err;
-    }
+    console.warn("  Kunne ikke hente creator-vault balance:", err instanceof Error ? err.message : err);
   }
+
+  const balanceSol = claimableLamports.toNumber() / LAMPORTS_PER_SOL;
 
   if (balanceSol < config.minClaimSol) {
     console.log(`  For lidt at claim (${balanceSol.toFixed(4)} SOL). Spring over.`);
     return { ok: true, skipped: true, reason: "For lidt at claim", treasurySol: balanceSol };
   }
 
-  let isMigrated = false;
-  try {
-    const feeResult = await sdk.getMinimumDistributableFee(config.mint);
-    isMigrated = feeResult.isGraduated;
-  } catch {
-    try {
-      const poolKey = PumpSwap.canonicalPumpPoolPda(config.mint);
-      const poolInfo = await connection.getAccountInfo(poolKey);
-      if (poolInfo) isMigrated = true;
-    } catch { /* antag bonding curve */ }
-  }
-  console.log(`  Migrated: ${isMigrated}`);
+  const graduated = await isGraduated(onlineSdk, mint);
+  const poolKey = graduated ? canonicalPumpPoolPda(mint) : null;
+  console.log(`  Graduated: ${graduated}${poolKey ? ` (pool ${poolKey.toBase58().slice(0, 8)}…)` : ""}`);
 
   const txs: TxRecord[] = [];
   const now = () => new Date().toISOString();
 
-  const claimIx = await sdk.collectCoinCreatorFeeInstructions(agent.publicKey, agent.publicKey);
-  const tx = new Transaction().add(...claimIx);
-  const sig = await sendAndConfirm(connection, tx, agent);
-  txs.push({ sig, type: "claim", time: now() });
-  console.log(`  Claimed ${balanceSol.toFixed(4)} SOL. Tx: ${sig}`);
+  // 2. Collect creator fees → SOL i agent-wallet
+  const claimIxs = await onlineSdk.collectCoinCreatorFeeInstructions(user);
+  if (claimIxs.length > 0) {
+    const claimSig = await sendIxs(connection, claimIxs, agent);
+    txs.push({ sig: claimSig, type: "claim", time: now() });
+    console.log(`  Claimed ${balanceSol.toFixed(4)} SOL. Tx: ${claimSig}`);
+  }
 
   const netSol = balanceSol;
 
   if (netSol < 0.005) {
-    console.log("  For lidt til buyback/LP. Ferdig.");
-    return {
-      ok: true,
-      claimed: netSol,
-      creatorShare: 0,
-      boughtBackSol: 0,
-      burnedTokens: 0,
-      lpSol: 0,
-      treasurySol: netSol,
-      txs,
-    };
+    console.log("  For lidt til buyback/LP. Færdig.");
+    return { ok: true, claimed: netSol, creatorShare: 0, boughtBackSol: 0, burnedTokens: 0, lpSol: 0, treasurySol: netSol, txs };
   }
 
+  // 3. Vælg strategi (LP kun muligt efter graduation til PumpSwap)
   let strategy: Strategy;
-  if (isMigrated) {
+  if (graduated && poolKey) {
     strategy = pickStrategy();
     console.log(`  Strategy: ${strategy.name} (${Math.round(strategy.buybackFraction * 100)}% buyback, ${Math.round(strategy.lpFraction * 100)}% LP)`);
   } else {
     strategy = { name: "bonding-curve", buybackFraction: 1, lpFraction: 0 };
   }
 
-  const buybackFraction = strategy.buybackFraction;
-  const lpFraction = strategy.lpFraction;
-  let buybackAmount = netSol * buybackFraction;
-  const lpAmount = netSol * lpFraction;
+  let buybackAmount = netSol * strategy.buybackFraction;
+  const lpAmount = netSol * strategy.lpFraction;
 
   let boughtBackSol = 0;
   let burnedTokens = 0;
   let lpSol = 0;
 
-  if (lpFraction > 0 && isMigrated) {
+  // 4. Add LP (PumpSwap) – fallback til buyback hvis det fejler
+  if (strategy.lpFraction > 0 && graduated && poolKey) {
     try {
-      const onlineAmm = new PumpSwap.OnlinePumpAmmSdk(connection);
-      const lpTxs = await doAddLp(connection, onlineAmm, agent, lpAmount);
+      const lpTxs = await doAddLp(connection, onlineAmm, ammSdk, agent, poolKey, lpAmount);
       txs.push(...lpTxs);
       lpSol = lpAmount;
     } catch (err) {
@@ -160,8 +155,9 @@ export async function runCycle(): Promise<CycleResult> {
     }
   }
 
-  if (buybackFraction > 0) {
-    const { burned, sigs } = await doBuyback(connection, sdk, agent, buybackAmount, isMigrated);
+  // 5. Buyback + burn
+  if (buybackAmount > 0) {
+    const { burned, sigs } = await doBuyback(connection, { onlineSdk, pumpSdk, onlineAmm, ammSdk }, agent, mint, poolKey, buybackAmount);
     txs.push(...sigs);
     burnedTokens = burned;
     boughtBackSol = buybackAmount;
@@ -180,96 +176,94 @@ export async function runCycle(): Promise<CycleResult> {
   };
 }
 
+type Sdks = {
+  onlineSdk: OnlinePumpSdk;
+  pumpSdk: PumpSdk;
+  onlineAmm: OnlinePumpAmmSdk;
+  ammSdk: PumpAmmSdk;
+};
+
+/** SOL → token swap. Bonding curve (pump) eller PumpSwap AMM afhængigt af graduation. */
+async function swapSolForToken(
+  connection: Connection,
+  sdks: Sdks,
+  agent: Keypair,
+  mint: PublicKey,
+  poolKey: PublicKey | null,
+  solAmount: number,
+  tokenProgram: PublicKey
+): Promise<string> {
+  const lamports = new BN(Math.floor(solAmount * LAMPORTS_PER_SOL));
+  const user = agent.publicKey;
+
+  if (poolKey) {
+    // PumpSwap AMM: køb base-tokens for et eksakt quote-input (SOL).
+    const swapState = await sdks.onlineAmm.swapSolanaState(poolKey, user);
+    const ixs = await sdks.ammSdk.buyQuoteInput(swapState, lamports, SLIPPAGE_PCT);
+    return await sendIxs(connection, ixs, agent);
+  }
+
+  // Bonding curve: køb via pump-programmet.
+  const [global, feeConfig, buyState] = await Promise.all([
+    sdks.onlineSdk.fetchGlobal(),
+    sdks.onlineSdk.fetchFeeConfig(),
+    sdks.onlineSdk.fetchBuyState(mint, user),
+  ]);
+
+  const amount = getBuyTokenAmountFromSolAmount({
+    global,
+    feeConfig,
+    mintSupply: buyState.bondingCurve.tokenTotalSupply,
+    bondingCurve: buyState.bondingCurve,
+    amount: lamports,
+    quoteMint: NATIVE_MINT,
+  });
+
+  const ixs = await sdks.pumpSdk.buyInstructions({
+    global,
+    bondingCurveAccountInfo: buyState.bondingCurveAccountInfo,
+    bondingCurve: buyState.bondingCurve,
+    associatedUserAccountInfo: buyState.associatedUserAccountInfo,
+    mint,
+    user,
+    amount,
+    solAmount: lamports,
+    slippage: SLIPPAGE_PCT,
+    tokenProgram,
+  });
+  return await sendIxs(connection, ixs, agent);
+}
+
 async function doBuyback(
   connection: Connection,
-  sdk: OnlinePumpSdk,
+  sdks: Sdks,
   agent: Keypair,
-  solAmount: number,
-  isMigrated: boolean
+  mint: PublicKey,
+  poolKey: PublicKey | null,
+  solAmount: number
 ): Promise<{ burned: number; sigs: TxRecord[] }> {
-  const config = getConfig();
   const sigs: TxRecord[] = [];
   const now = () => new Date().toISOString();
-  const agentTokenAta = getAssociatedTokenAddressSync(config.mint, agent.publicKey, true, TOKEN_2022_PROGRAM_ID);
 
-  const solBn = new BN(Math.floor(solAmount * LAMPORTS_PER_SOL));
+  const tokenProgram = await getMintTokenProgram(connection, mint);
+  const agentTokenAta = getAssociatedTokenAddressSync(mint, agent.publicKey, true, tokenProgram);
 
-  async function buyViaAmm(): Promise<string> {
-    const onlineAmm = new PumpSwap.OnlinePumpAmmSdk(connection);
-    const poolKey = PumpSwap.canonicalPumpPoolPda(config.mint);
-    const swapState = await onlineAmm.swapSolanaState(poolKey, agent.publicKey);
-    const buyIx = await PumpSwap.PUMP_AMM_SDK.buyQuoteInput(swapState, solBn, 2);
-    appendV2Account(buyIx, PUMP_AMM_PROGRAM_ID, poolV2Pda(config.mint));
-    const tx = new Transaction().add(...buyIx);
-    const s = await sendAndConfirm(connection, tx, agent);
-    console.log(`  Buyback (AMM): ${solAmount.toFixed(4)} SOL`);
-    return s;
-  }
-
-  async function buyViaBondingCurve(): Promise<string> {
-    const global = await sdk.fetchGlobal();
-    const { bondingCurveAccountInfo, bondingCurve, associatedUserAccountInfo } = await sdk.fetchBuyState(
-      config.mint,
-      agent.publicKey,
-      TOKEN_2022_PROGRAM_ID
-    );
-    const amount = getBuyTokenAmountFromSolAmount({
-      global,
-      feeConfig: null,
-      mintSupply: bondingCurve.tokenTotalSupply,
-      bondingCurve,
-      amount: solBn,
-      quoteMint: NATIVE_MINT,
-    });
-    const buyIx = await PUMP_SDK.buyInstructions({
-      global,
-      bondingCurveAccountInfo,
-      bondingCurve,
-      associatedUserAccountInfo,
-      mint: config.mint,
-      user: agent.publicKey,
-      solAmount: solBn,
-      amount,
-      slippage: 2,
-      tokenProgram: TOKEN_2022_PROGRAM_ID,
-    });
-    appendV2Account(buyIx, PUMP_PROGRAM_ID, bondingCurveV2Pda(config.mint));
-    const tx = new Transaction().add(...buyIx);
-    const s = await sendAndConfirm(connection, tx, agent);
-    console.log(`  Buyback (bonding): ${solAmount.toFixed(4)} SOL → ~${amount.toString()} tokens`);
-    return s;
-  }
-
-  let buySig: string;
-  if (isMigrated) {
-    buySig = await buyViaAmm();
-  } else {
-    try {
-      buySig = await buyViaBondingCurve();
-    } catch (err) {
-      const msg = err instanceof Error ? err.message : String(err);
-      if (msg.includes("BondingCurveComplete") || msg.includes("0x1775")) {
-        console.log("  Bonding curve complete – skifter til AMM...");
-        buySig = await buyViaAmm();
-      } else {
-        throw err;
-      }
-    }
-  }
+  const buySig = await swapSolForToken(connection, sdks, agent, mint, poolKey, solAmount, tokenProgram);
   sigs.push({ sig: buySig, type: "buyback", time: now() });
+  console.log(`  Buyback: ${solAmount.toFixed(4)} SOL → tokens`);
 
   await sleep(3000);
 
-  let balance = await getTokenBalance(connection, agentTokenAta);
+  let balance = await getTokenBalance(connection, agentTokenAta, tokenProgram);
   if (balance === BigInt(0)) {
     await sleep(3000);
-    balance = await getTokenBalance(connection, agentTokenAta);
+    balance = await getTokenBalance(connection, agentTokenAta, tokenProgram);
   }
 
   if (balance > BigInt(0)) {
     console.log(`  [Burn] ${balance} tokens i wallet → brænder alt`);
-    const burnIx = createBurnInstruction(agentTokenAta, config.mint, agent.publicKey, balance, [], TOKEN_2022_PROGRAM_ID);
-    const burnSig = await sendAndConfirm(connection, new Transaction().add(burnIx), agent);
+    const burnIx = createBurnInstruction(agentTokenAta, mint, agent.publicKey, balance, [], tokenProgram);
+    const burnSig = await sendIxs(connection, [burnIx], agent);
     sigs.push({ sig: burnSig, type: "burn", time: now() });
     console.log(`  Burned ${balance.toString()} tokens`);
     return { burned: Number(balance), sigs };
@@ -279,81 +273,77 @@ async function doBuyback(
 }
 
 /**
- * Tilføjer v2 PDA som readonly account til instructions for det givne program.
- * Krævet af PumpFun's program-opdatering (feb 2026).
+ * Tilføjer likviditet til PumpSwap-poolen: zapper en del af SOL'en til base-tokens,
+ * og deponerer derefter resten af SOL'en + de købte tokens som en LP-position.
  */
-function appendV2Account(instructions: import("@solana/web3.js").TransactionInstruction[], programId: PublicKey, v2Pda: PublicKey) {
-  for (const ix of instructions) {
-    if (ix.programId.equals(programId)) {
-      ix.keys.push({
-        pubkey: v2Pda,
-        isSigner: false,
-        isWritable: false,
-      });
-    }
-  }
-}
-
-async function getTokenBalance(connection: Connection, ata: PublicKey): Promise<bigint> {
-  try {
-    const acc = await getAccount(connection, ata, "confirmed", TOKEN_2022_PROGRAM_ID);
-    return acc.amount;
-  } catch {
-    return BigInt(0);
-  }
-}
-
 async function doAddLp(
   connection: Connection,
-  onlineAmm: PumpSwap.OnlinePumpAmmSdk,
+  onlineAmm: OnlinePumpAmmSdk,
+  ammSdk: PumpAmmSdk,
   agent: Keypair,
+  pool: PublicKey,
   solAmount: number
 ): Promise<TxRecord[]> {
-  const config = getConfig();
   const records: TxRecord[] = [];
   const now = () => new Date().toISOString();
-  const poolKey = PumpSwap.canonicalPumpPoolPda(config.mint);
+  const user = agent.publicKey;
 
-  const buySol = solAmount * 0.65;
-  const depositSol = solAmount * 0.35;
+  const buySol = solAmount * 0.6;
+  const depositSol = solAmount * 0.4;
 
-  const solBn = new BN(Math.floor(buySol * LAMPORTS_PER_SOL));
-  const swapState = await onlineAmm.swapSolanaState(poolKey, agent.publicKey);
-  const buyIx = await PumpSwap.PUMP_AMM_SDK.buyQuoteInput(swapState, solBn, 5);
-  appendV2Account(buyIx, PUMP_AMM_PROGRAM_ID, poolV2Pda(config.mint));
-  const buyTx = new Transaction().add(...buyIx);
-  const buySig = await sendAndConfirm(connection, buyTx, agent);
+  // Zap: skaf base-tokens til den ene side af positionen
+  const buyState = await onlineAmm.swapSolanaState(pool, user);
+  const buyIxs = await ammSdk.buyQuoteInput(buyState, new BN(Math.floor(buySol * LAMPORTS_PER_SOL)), SLIPPAGE_PCT);
+  const buySig = await sendIxs(connection, buyIxs, agent);
   records.push({ sig: buySig, type: "lp-buy", time: now() });
   console.log(`  LP zap: købt tokens med ${buySol.toFixed(4)} SOL`);
 
   await sleep(4000);
 
-  const liquidityState = await onlineAmm.liquiditySolanaState(poolKey, agent.publicKey);
-  const quoteAmount = new BN(Math.floor(depositSol * LAMPORTS_PER_SOL));
-  const slippage = 10;
-
-  const pumpAmmSdk = new PumpSwap.PumpAmmSdk();
-  const { lpToken } = await pumpAmmSdk.depositAutocompleteBaseAndLpTokenFromQuote(
-    liquidityState,
-    quoteAmount,
-    slippage
-  );
-
-  const depositIx = await pumpAmmSdk.depositInstructions(liquidityState, lpToken, slippage);
-  appendV2Account(depositIx, PUMP_AMM_PROGRAM_ID, poolV2Pda(config.mint));
-
-  const tx = new Transaction().add(...depositIx);
-  const depSig = await sendAndConfirm(connection, tx, agent);
+  // Deposit: SOL (quote) + tokens (base) → LP-position
+  const liqState = await onlineAmm.liquiditySolanaState(pool, user);
+  const depositQuote = new BN(Math.floor(depositSol * LAMPORTS_PER_SOL));
+  const { lpToken } = ammSdk.depositAutocompleteBaseAndLpTokenFromQuote(liqState, depositQuote, SLIPPAGE_PCT);
+  const depositIxs = await ammSdk.depositInstructions(liqState, lpToken, SLIPPAGE_PCT);
+  const depSig = await sendIxs(connection, depositIxs, agent);
   records.push({ sig: depSig, type: "lp-deposit", time: now() });
   console.log(`  Add LP: ${depositSol.toFixed(4)} SOL + tokens. Tx: ${depSig}`);
 
   return records;
 }
 
+/** Finder ud af om mint'en bruger SPL Token eller Token-2022. */
+async function getMintTokenProgram(connection: Connection, mint: PublicKey): Promise<PublicKey> {
+  const info = await connection.getAccountInfo(mint);
+  if (info && info.owner.equals(TOKEN_2022_PROGRAM_ID)) return TOKEN_2022_PROGRAM_ID;
+  return TOKEN_PROGRAM_ID;
+}
+
+async function getTokenBalance(connection: Connection, ata: PublicKey, tokenProgram: PublicKey): Promise<bigint> {
+  try {
+    const acc = await getAccount(connection, ata, "confirmed", tokenProgram);
+    return acc.amount;
+  } catch {
+    return BigInt(0);
+  }
+}
+
+/** Pakker instruktioner i en transaktion (med compute budget) og sender med retry. */
+async function sendIxs(
+  connection: Connection,
+  instructions: TransactionInstruction[],
+  signer: Keypair,
+  extraSigners: Keypair[] = []
+): Promise<string> {
+  const tx = new Transaction().add(...instructions);
+  return await sendAndConfirm(connection, tx, signer, extraSigners);
+}
+
 async function sendAndConfirm(
   connection: Connection,
   tx: Transaction,
-  signer: Keypair
+  signer: Keypair,
+  extraSigners: Keypair[] = []
 ): Promise<string> {
   tx.feePayer = signer.publicKey;
 
@@ -371,7 +361,7 @@ async function sendAndConfirm(
       tx.recentBlockhash = blockhash;
       tx.signatures = [];
 
-      const sig = await connection.sendTransaction(tx, [signer], {
+      const sig = await connection.sendTransaction(tx, [signer, ...extraSigners], {
         skipPreflight: false,
         preflightCommitment: "processed",
         maxRetries: 5,

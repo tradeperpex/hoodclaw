@@ -50,7 +50,7 @@ export async function saveAgentCycle(result: {
     total_lp_sol: 0,
     treasury_sol: 0,
     thought: "",
-    thought_meta: "— OnlyClaw",
+    thought_meta: "— AgentClaw",
     feed_entries: [],
   };
 
@@ -102,8 +102,9 @@ export async function saveAgentCycle(result: {
     total_lp_sol: (prev.total_lp_sol ?? 0) + (result.lpSol ?? 0),
     treasury_sol: result.treasurySol ?? prev.treasury_sol ?? 0,
     thought: result.thought ?? prev.thought ?? "Waiting for next cycle",
-    thought_meta: "— OnlyClaw",
+    thought_meta: "— AgentClaw",
     feed_entries: feed,
+    last_run_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
   };
 

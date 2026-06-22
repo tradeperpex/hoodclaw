@@ -1,11 +1,5 @@
-import HomeHeader from "@/components/HomeHeader";
-import BentoHome from "@/components/BentoHome";
+import Home from "@/components/Home";
 
-export default function Home() {
-  return (
-    <>
-      <HomeHeader />
-      <BentoHome />
-    </>
-  );
+export default function Page() {
+  return <Home />;
 }

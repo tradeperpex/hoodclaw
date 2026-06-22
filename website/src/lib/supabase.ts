@@ -22,4 +22,5 @@ export type AgentStatsRow = {
   thought_meta: string;
   feed_entries: unknown[];
   updated_at: string;
+  last_run_at: string | null;
 };

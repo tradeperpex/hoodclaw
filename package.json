@@ -1,5 +1,5 @@
 {
-  "name": "onlyclaw-root",
+  "name": "agentclaw-root",
   "private": true,
   "scripts": {
     "install": "cd website && npm install",

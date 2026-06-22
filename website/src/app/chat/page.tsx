@@ -1,15 +1,13 @@
 "use client";
 
-import Link from "next/link";
 import { useState, useRef, useEffect } from "react";
 
 type Message = { role: "user" | "assistant"; content: string };
 
 const SAMPLE_QUESTIONS = [
-  "Why did you pick that strategy last cycle?",
-  "How much have you burned lifetime?",
-  "Are you waiting for the migration?",
-  "What's the next thing you'll do?",
+  "why did you pick that strategy last cycle?",
+  "how much have you burned lifetime?",
+  "what will you do next?",
 ];
 
 export default function ChatPage() {
@@ -39,12 +37,12 @@ export default function ChatPage() {
         body: JSON.stringify({ messages: next }),
       });
       const data = await res.json();
-      const reply = data?.reply ?? "Something glitched. Try again.";
+      const reply = data?.reply ?? "something glitched. try again.";
       setMessages([...next, { role: "assistant", content: reply }]);
     } catch {
       setMessages([
         ...next,
-        { role: "assistant", content: "Couldn't reach me. Try again in a moment." },
+        { role: "assistant", content: "couldn't reach me. try again in a moment." },
       ]);
     } finally {
       setSending(false);
@@ -58,59 +56,43 @@ export default function ChatPage() {
   }
 
   return (
-    <div className="chat-page">
-      <Link href="/" className="back-link">← Back to home</Link>
-
-      <div className="chat-hero">
-        <div className="chat-hero-label">Talk to CLAW</div>
-        <h1 className="chat-title">Ask the agent.</h1>
-        <p className="chat-sub">
-          CLAW answers with the same on-chain context it just used to act.
-          It can reference its lifetime stats, recent cycles, and any
-          decision it has made. Not a chatbot wrapping replies in
-          personality. The actual agent, reasoning out loud.
+    <div className="page chat-page">
+      <section>
+        <div className="page-label">chat</div>
+        <h1 className="page-title">talk to claw</h1>
+        <p className="page-sub">
+          the agent answers with the same on-chain context it used to act. not a chatbot — the actual agent, reasoning out loud.
         </p>
-      </div>
+      </section>
 
       <div className="chat-thread">
         {messages.length === 0 && (
-          <div className="chat-empty">
-            <div className="chat-empty-label">Try asking</div>
-            <div className="chat-samples">
-              {SAMPLE_QUESTIONS.map((q) => (
-                <button
-                  key={q}
-                  type="button"
-                  className="chat-sample"
-                  onClick={() => send(q)}
-                  disabled={sending}
-                >
-                  {q}
-                </button>
-              ))}
-            </div>
+          <div className="chat-samples">
+            {SAMPLE_QUESTIONS.map((q) => (
+              <button
+                key={q}
+                type="button"
+                className="chat-sample"
+                onClick={() => send(q)}
+                disabled={sending}
+              >
+                {q}
+              </button>
+            ))}
           </div>
         )}
 
         {messages.map((m, i) => (
-          <div key={i} className={`chat-msg chat-msg-${m.role}`}>
-            {m.role === "assistant" && (
-              <div className="chat-msg-agent">
-                <span className="chat-msg-dot" />
-                CLAW
-              </div>
-            )}
-            <p className="chat-msg-text">{m.content}</p>
+          <div key={i} className={m.role === "user" ? "chat-line chat-line-user" : "chat-line chat-line-agent"}>
+            {m.role === "assistant" && <span className="who">claw:</span>}
+            {m.content}
           </div>
         ))}
 
         {sending && (
-          <div className="chat-msg chat-msg-assistant">
-            <div className="chat-msg-agent">
-              <span className="chat-msg-dot chat-msg-dot-thinking" />
-              CLAW
-            </div>
-            <p className="chat-msg-text chat-msg-thinking">thinking...</p>
+          <div className="chat-line chat-line-agent">
+            <span className="who">claw:</span>
+            thinking…
           </div>
         )}
 
@@ -123,12 +105,12 @@ export default function ChatPage() {
           type="text"
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          placeholder="Ask CLAW anything..."
+          placeholder="ask claw anything…"
           disabled={sending}
           maxLength={1000}
         />
         <button type="submit" disabled={sending || !input.trim()}>
-          Send
+          send
         </button>
       </form>
     </div>

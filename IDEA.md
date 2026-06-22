@@ -1,6 +1,6 @@
-# OnlyClaw – ideen
+# AgentClaw – ideen
 
-**Navn:** OnlyClaw (only + claw)
+**Navn:** AgentClaw (Agent + claw) — agenten hedder **CLAW**.
 
 **Koncept:** Én autonom AI-agent der *styrer en coin alene* – ingen team, ingen multisig, ingen menneskelige beslutninger. Kun ét greb om token'et: the claw.
 
@@ -11,6 +11,8 @@
 - Agenten skriver sin egen tankegang efter hver cyklus
 - Alt synligt for brugeren i real-time
 
-**Only = ingen andre, kun agenten. Claw = agentens greb om token.**
+**Agent = ingen mennesker, kun maskinen. Claw = agentens greb om token.**
+
+**Look:** Plain hvidt/sort, mystisk, simpelt, clean — monospace, hairlines, ingen farver. Én agent i det hvide.
 
 **Husk:** Hold det smart, simpelt og fedt. Én agent = klar historie, intet at gemme sig bag.

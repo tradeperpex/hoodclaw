@@ -1,14 +1,8 @@
-import HomeHeader from "@/components/HomeHeader";
+export const metadata = {
+  title: "Thoughts — AgentClaw",
+  description: "The agent's reasoning after every cycle.",
+};
 
-export default function ThoughtsLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
-  return (
-    <>
-      <HomeHeader />
-      {children}
-    </>
-  );
+export default function ThoughtsLayout({ children }: { children: React.ReactNode }) {
+  return children;
 }
