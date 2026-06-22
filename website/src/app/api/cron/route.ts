@@ -5,10 +5,20 @@ import { generateThoughtForCycle } from "@/lib/agent/thought";
 
 export const maxDuration = 60;
 export const dynamic = "force-dynamic";
+export const runtime = "nodejs";
+
+function isCronAuthorized(request: Request): boolean {
+  const secret = process.env.CRON_SECRET?.trim();
+  const auth = request.headers.get("authorization") ?? "";
+  const vercelCron = request.headers.get("x-vercel-cron") === "1";
+
+  if (secret && auth === `Bearer ${secret}`) return true;
+  if (process.env.VERCEL === "1" && vercelCron) return true;
+  return false;
+}
 
 export async function GET(request: Request) {
-  const authHeader = request.headers.get("authorization");
-  if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+  if (!isCronAuthorized(request)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 

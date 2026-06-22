@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import type { AgentState } from "@/lib/agent-types";
 
-const POLL_MS = 10_000;
+const POLL_MS = 30_000;
 
 export function useAgentData(): AgentState {
   const [state, setState] = useState<AgentState | null>(null);

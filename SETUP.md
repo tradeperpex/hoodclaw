@@ -51,7 +51,7 @@ curl -H "Authorization: Bearer YOUR_CRON_SECRET" http://localhost:3000/api/cron
 
 - **Root directory:** `website`
 - Add all env vars from `website/.env.example`
-- Cron runs `/api/cron` every 3 minutes (see `website/vercel.json`)
+- Cron runs `/api/cron` every minute (see `website/vercel.json`)
 
 ---
 

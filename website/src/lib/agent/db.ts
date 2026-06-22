@@ -108,9 +108,13 @@ export async function saveAgentCycle(result: {
     updated_at: new Date().toISOString(),
   };
 
-  await admin.from("agent_stats").upsert(
+  const { error } = await admin.from("agent_stats").upsert(
     { id: "default", ...updates },
     { onConflict: "id" }
   );
+  if (error) {
+    console.error("[db] Supabase upsert fejl:", error.message);
+    throw new Error(`Supabase save failed: ${error.message}`);
+  }
   console.log("[db] Gemt til Supabase");
 }

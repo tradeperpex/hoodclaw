@@ -27,7 +27,7 @@ export async function GET() {
       },
     };
     return NextResponse.json(json, {
-      headers: { "Cache-Control": "public, s-maxage=60, stale-while-revalidate=120" },
+      headers: { "Cache-Control": "public, s-maxage=30, stale-while-revalidate=60" },
     });
   } catch (err) {
     console.error("[agent-stats]", err);
