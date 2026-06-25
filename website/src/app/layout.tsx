@@ -24,7 +24,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "The Agent Company",
     description: "Five autonomous agents. One token. No human hands, on pump.fun.",
-    site: "@theagentco",
+    site: "@agentcompanyfun",
   },
 };
 

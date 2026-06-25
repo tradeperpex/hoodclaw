@@ -5,7 +5,7 @@ import { useAgentData } from "@/hooks/useAgentData";
 import { useAgentLog } from "@/hooks/useAgentLog";
 import { formatCompact, formatSol } from "@/lib/format-stats";
 
-const X_URL = "https://x.com/theagentco";
+const X_URL = "https://x.com/agentcompanyfun";
 
 const PUMP_URL = process.env.NEXT_PUBLIC_MINT_ADDRESS
   ? `https://pump.fun/coin/${process.env.NEXT_PUBLIC_MINT_ADDRESS}`
