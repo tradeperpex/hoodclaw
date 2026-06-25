@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { getFakeAgentState, type AgentState } from "@/lib/fake-agent";
 import { CYCLE_INTERVAL_MS } from "@/data/agent-script";
 
-const STORAGE_KEY = "agentclaw_demo_start";
+const STORAGE_KEY = "theagentco_demo_start";
 
 function getDemoStart(): number {
   if (typeof window === "undefined") return Date.now();

@@ -3,8 +3,8 @@
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
 /*
-  AgentClaw — plain white / black, mysterious, clean, autonomous-agent aesthetic.
-  Monochrome. Hairlines. Mono labels. No glow, no color. One agent in the white.
+  The Agent Company — plain white / black, multi-agent terminal aesthetic.
+  Monochrome. Hairlines. Mono labels. Five agents, one company.
 */
 
 :root {
@@ -19,7 +19,6 @@
   --mid: #76767c;
   --dim: #a6a6ad;
 
-  /* accent is simply black — kept under old names so every rule stays monochrome */
   --green: #0a0a0a;
   --green-soft: rgba(0, 0, 0, 0.05);
   --green-line: rgba(0, 0, 0, 0.22);
@@ -34,6 +33,13 @@
   --rail: 72px;
   --r: 4px;
   --r-lg: 6px;
+
+  /* agent accent tones (all near-black, differentiated by shade) */
+  --agent-exec:    #0a0a0a;
+  --agent-claim:   #2a2a2a;
+  --agent-buyback: #3a3a3a;
+  --agent-burn:    #0a0a0a;
+  --agent-lp:      #5a5a60;
 }
 
 html { scroll-behavior: smooth; }
@@ -51,10 +57,10 @@ body {
 a { color: inherit; text-decoration: none; }
 ::selection { background: var(--ink); color: #fff; }
 
-/* blinking agent cursor */
 @keyframes blink { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0; } }
+@keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.2; } }
 
-/* ===================== NAV (minimal top bar) ===================== */
+/* ===================== NAV ===================== */
 
 .nav {
   display: flex;
@@ -68,8 +74,8 @@ a { color: inherit; text-decoration: none; }
 .nav-logo {
   font-family: var(--mono);
   font-size: 13px;
-  font-weight: 500;
-  letter-spacing: 1px;
+  font-weight: 600;
+  letter-spacing: 1.5px;
   color: var(--ink);
 }
 .nav-links {
@@ -121,10 +127,8 @@ a { color: inherit; text-decoration: none; }
   border: 1px solid transparent;
 }
 .btn-lg { padding: 14px 26px; font-size: 14px; }
-
 .btn-primary { background: var(--ink); color: #fff; border-color: var(--ink); }
 .btn-primary:hover { background: #fff; color: var(--ink); }
-
 .btn-ghost { background: transparent; color: var(--ink); border-color: var(--line2); }
 .btn-ghost:hover { border-color: var(--ink); }
 
@@ -141,15 +145,13 @@ a { color: inherit; text-decoration: none; }
   border: 1px solid var(--line2);
   color: var(--ink2);
 }
-.tag-claim { color: var(--ink); border-color: var(--line2); }
-.tag-buy   { color: var(--ink); border-color: var(--line2); }
-.tag-burn  { color: #fff; background: var(--ink); border-color: var(--ink); }
-.tag-lp    { color: var(--mid); border-color: var(--line2); }
-.tag-scan  { color: var(--dim); border-color: var(--line); }
+.tag-claim   { color: var(--ink);  border-color: var(--line2); }
+.tag-buy     { color: var(--ink);  border-color: var(--line2); }
+.tag-burn    { color: #fff; background: var(--ink); border-color: var(--ink); }
+.tag-lp      { color: var(--mid);  border-color: var(--line2); }
+.tag-scan    { color: var(--dim);  border-color: var(--line); }
 
-/* ===================== HOME (ultra-minimal) ===================== */
-
-@keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.2; } }
+/* ===================== HOME ===================== */
 
 .home {
   max-width: 640px;
@@ -160,7 +162,6 @@ a { color: inherit; text-decoration: none; }
   gap: 56px;
 }
 
-/* intro */
 .intro-title {
   font-family: var(--mono);
   font-size: clamp(26px, 5vw, 40px);
@@ -179,7 +180,101 @@ a { color: inherit; text-decoration: none; }
   max-width: 520px;
 }
 
-/* terminal-style readout */
+/* ---- agent roster ---- */
+
+.agent-roster {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+.agent-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--line);
+}
+.agent-row:first-child { border-top: 1px solid var(--line); }
+.agent-desc {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--mid);
+  flex: 1;
+}
+.agent-live-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--ink);
+  animation: pulse 2.4s ease-in-out infinite;
+  flex-shrink: 0;
+}
+
+/* agent tags */
+.agent-tag {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  padding: 3px 9px;
+  border-radius: var(--r);
+  border: 1px solid var(--line2);
+  flex-shrink: 0;
+  min-width: 72px;
+  text-align: center;
+  color: var(--ink2);
+}
+.agent-tag-exec    { color: #fff; background: var(--ink); border-color: var(--ink); }
+.agent-tag-claim   { color: var(--ink); border-color: var(--ink); }
+.agent-tag-buyback { color: var(--ink2); border-color: var(--line2); }
+.agent-tag-burn    { color: var(--ink); border-color: var(--ink); font-weight: 700; }
+.agent-tag-lp      { color: var(--mid); border-color: var(--line2); }
+
+/* ---- agent terminal log ---- */
+
+.agent-terminal {
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  overflow: hidden;
+}
+.terminal-header {
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--line);
+  background: var(--panel2);
+}
+.terminal-body {
+  padding: 12px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-height: 220px;
+  overflow-y: auto;
+}
+.tlog-line {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  font-family: var(--mono);
+  font-size: 12px;
+  line-height: 1.6;
+}
+.tlog-who {
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  flex-shrink: 0;
+  width: 64px;
+}
+.tlog-who-exec    { color: var(--ink); }
+.tlog-who-claim   { color: var(--ink2); }
+.tlog-who-buyback { color: var(--ink2); }
+.tlog-who-burn    { color: var(--ink); font-weight: 700; }
+.tlog-who-lp      { color: var(--mid); }
+.tlog-sep { color: var(--dim); flex-shrink: 0; }
+.tlog-msg { color: var(--ink2); }
+
+/* terminal readout */
 .readout { display: flex; flex-direction: column; }
 .readout-row {
   display: flex;
@@ -228,7 +323,6 @@ a { color: inherit; text-decoration: none; }
 .home-links a:hover { color: var(--ink); }
 .home-links .buy { color: var(--ink); text-decoration: underline; text-underline-offset: 3px; }
 
-/* live tag */
 .live {
   display: inline-flex;
   align-items: center;
@@ -241,7 +335,7 @@ a { color: inherit; text-decoration: none; }
 }
 .live-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--ink); animation: pulse 2.4s ease-in-out infinite; }
 
-/* ===================== SHARED PAGE SHELL (matches home) ===================== */
+/* ===================== SHARED PAGE SHELL ===================== */
 
 .page {
   max-width: 640px;
@@ -260,7 +354,6 @@ a { color: inherit; text-decoration: none; }
   color: var(--dim);
   margin-bottom: 14px;
 }
-
 .page-title {
   font-family: var(--mono);
   font-size: clamp(22px, 4vw, 32px);
@@ -269,7 +362,6 @@ a { color: inherit; text-decoration: none; }
   line-height: 1.2;
   color: var(--ink);
 }
-
 .page-sub {
   margin-top: 16px;
   font-family: var(--mono);
@@ -278,7 +370,6 @@ a { color: inherit; text-decoration: none; }
   color: var(--mid);
   max-width: 520px;
 }
-
 .empty {
   font-family: var(--mono);
   font-size: 13px;
@@ -286,7 +377,7 @@ a { color: inherit; text-decoration: none; }
   color: var(--mid);
 }
 
-/* vertical feed (proof, thoughts, roadmap items) */
+/* vertical feed */
 .feed { display: flex; flex-direction: column; }
 .feed-row {
   padding: 12px 0;
@@ -307,6 +398,11 @@ a { color: inherit; text-decoration: none; }
   color: var(--dim);
   text-transform: lowercase;
   letter-spacing: 0.5px;
+}
+.feed-meta-agent {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
 }
 .feed-detail { color: var(--ink2); }
 .feed-link {
@@ -332,12 +428,7 @@ a { color: inherit; text-decoration: none; }
 }
 .docs-nav a { color: var(--dim); transition: color 0.15s; }
 .docs-nav a:hover { color: var(--ink); }
-
-.docs-section {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
+.docs-section { display: flex; flex-direction: column; gap: 12px; }
 .docs-section h2 {
   font-family: var(--mono);
   font-size: 13px;
@@ -355,11 +446,7 @@ a { color: inherit; text-decoration: none; }
   line-height: 1.85;
   color: var(--mid);
 }
-.docs-section code {
-  font-family: var(--mono);
-  font-size: 12px;
-  color: var(--ink);
-}
+.docs-section code { font-family: var(--mono); font-size: 12px; color: var(--ink); }
 .docs-list { display: flex; flex-direction: column; gap: 0; }
 .docs-item {
   display: flex;
@@ -375,8 +462,47 @@ a { color: inherit; text-decoration: none; }
 .docs-item-body strong { display: block; color: var(--ink); font-weight: 500; margin-bottom: 4px; }
 .docs-item-body p { color: var(--mid); font-size: 12px; line-height: 1.75; margin: 0; }
 
-/* chat (terminal style) */
+/* agent card in docs */
+.agent-card {
+  display: flex;
+  gap: 14px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--line);
+  font-family: var(--mono);
+  font-size: 13px;
+  line-height: 1.7;
+  align-items: flex-start;
+}
+.agent-card:first-child { border-top: 1px solid var(--line); }
+.agent-card-tag { flex-shrink: 0; }
+.agent-card-body strong { display: block; color: var(--ink); font-weight: 500; margin-bottom: 4px; }
+.agent-card-body p { color: var(--mid); font-size: 12px; line-height: 1.75; margin: 0; }
+
+/* chat */
 .chat-page { min-height: calc(100vh - 80px); }
+.chat-selector {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--line);
+}
+.chat-selector-btn {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  padding: 5px 12px;
+  border-radius: var(--r);
+  border: 1px solid var(--line2);
+  background: transparent;
+  color: var(--mid);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.chat-selector-btn:hover { color: var(--ink); border-color: var(--ink); }
+.chat-selector-btn.active { background: var(--ink); color: #fff; border-color: var(--ink); }
 .chat-thread {
   flex: 1;
   display: flex;
@@ -388,7 +514,14 @@ a { color: inherit; text-decoration: none; }
 .chat-line-user { color: var(--ink); }
 .chat-line-user::before { content: "> "; color: var(--dim); }
 .chat-line-agent { color: var(--ink2); }
-.chat-line-agent .who { color: var(--dim); margin-right: 6px; }
+.chat-line-agent .who {
+  display: inline-block;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-right: 8px;
+  color: var(--ink);
+}
 .chat-samples {
   display: flex;
   flex-direction: column;
@@ -478,7 +611,6 @@ a { color: inherit; text-decoration: none; }
   .home, .page { padding-left: 20px; padding-right: 20px; }
   .site-foot { padding-left: 20px; padding-right: 20px; }
 }
-
 @media (max-width: 480px) {
   .home, .page { padding-top: 44px; gap: 40px; }
 }

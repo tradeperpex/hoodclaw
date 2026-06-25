@@ -5,26 +5,26 @@ import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://theagentclaw.fun"),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://theagentcompany.fun"),
   title: {
-    default: "AgentClaw",
+    default: "The Agent Company",
     template: "%s",
   },
-  description: "One autonomous agent. One token. No human hands, on pump.fun.",
+  description: "Five autonomous agents. One token. No human hands, on pump.fun.",
   icons: { icon: "/icon.svg" },
   openGraph: {
-    title: "AgentClaw",
-    description: "One autonomous agent. One token. No human hands, on pump.fun.",
-    siteName: "AgentClaw",
+    title: "The Agent Company",
+    description: "Five autonomous agents. One token. No human hands, on pump.fun.",
+    siteName: "The Agent Company",
     type: "website",
     locale: "en_US",
     url: "/",
   },
   twitter: {
     card: "summary_large_image",
-    title: "AgentClaw",
-    description: "One autonomous agent. One token. No human hands, on pump.fun.",
-    site: "@agentclawfun",
+    title: "The Agent Company",
+    description: "Five autonomous agents. One token. No human hands, on pump.fun.",
+    site: "@theagentco",
   },
 };
 

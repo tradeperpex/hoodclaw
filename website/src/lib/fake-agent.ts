@@ -1,6 +1,6 @@
 /**
- * Fake agent – kører script-cykluser. Hver cyklus: claim → 80% ud → 20% treasury → buyback/burn/LP.
- * Viser KUN treasury-data (20%). 80% vises aldrig.
+ * The Agent Company — multi-agent cycle simulator.
+ * Five agents: CLAIM → EXEC decides → BUYBACK → BURN → LP
  */
 
 import { runCycle, CYCLE_INTERVAL_MS, MIGRATED_AFTER_CYCLE, type CycleAction } from "@/data/agent-script";
@@ -8,32 +8,47 @@ import type { AgentFeedEntry, AgentStats, AgentState } from "./agent-types";
 
 export type { AgentFeedEntry, AgentStats, AgentState };
 
+const ACTION_LABELS: Record<string, string> = {
+  claim:   "Claim",
+  buyback: "Buyback",
+  burn:    "Burned tokens",
+  addLP:   "Added LP",
+  thought: "Thought",
+};
+
 function actionToFeedEntry(action: CycleAction, cycleIndex: number): AgentFeedEntry | null {
   const time = `C${cycleIndex + 1}`;
   switch (action.type) {
     case "claim":
       return {
         time,
-        action: `+${action.toTreasury.toFixed(2)} SOL to treasury`,
-        detail: "20% from claim",
+        action: "Claim",
+        detail: `CLAIM collected ${action.totalSol.toFixed(2)} SOL — ${action.toTreasury.toFixed(2)} SOL to treasury`,
       };
     case "buyback":
       return {
         time,
-        action: `Bought back ${action.tokens.toLocaleString()} tokens`,
-        detail: `${action.sol.toFixed(2)} SOL`,
+        action: "Buyback",
+        detail: `BUYBACK spent ${action.sol.toFixed(2)} SOL → acquired ${action.tokens.toLocaleString()} tokens`,
       };
     case "burn":
       return {
         time,
-        action: `Burned ${action.tokens.toLocaleString()} tokens`,
-        detail: "Supply reduced",
+        action: "Burned tokens",
+        detail: `BURN destroyed ${action.tokens.toLocaleString()} tokens permanently`,
       };
     case "addLP":
       return {
         time,
-        action: `Added ${action.sol.toFixed(2)} SOL to LP`,
-        detail: "Pool depth strengthened",
+        action: "Added LP",
+        detail: `LP deepened pool with ${action.sol.toFixed(2)} SOL`,
+      };
+    case "thought":
+      return {
+        time,
+        action: "Thought",
+        detail: action.text,
+        strategy: action.strategy,
       };
     default:
       return null;
@@ -48,7 +63,7 @@ export function getFakeAgentState(cyclesCompleted: number): AgentState {
   let totalLpSol = 0;
 
   const feedEntries: AgentFeedEntry[] = [];
-  let latestThought = "Waiting for first cycle...";
+  let latestThought = "All agents online. Waiting for first cycle.";
 
   for (let i = 0; i < cyclesCompleted; i++) {
     const isMigrated = i >= MIGRATED_AFTER_CYCLE;
@@ -80,18 +95,18 @@ export function getFakeAgentState(cyclesCompleted: number): AgentState {
   }
 
   const stats: AgentStats = {
-    treasurySol: Math.round(Math.max(0, treasury) * 10) / 10,
-    totalClaimed: Math.round(totalToTreasury * 10) / 10,
+    treasurySol:      Math.round(Math.max(0, treasury) * 10) / 10,
+    totalClaimed:     Math.round(totalToTreasury * 10) / 10,
     totalCreatorShare: 0,
     totalBurned,
     totalBoughtBack,
-    totalLpSol: Math.round(totalLpSol * 10) / 10,
+    totalLpSol:       Math.round(totalLpSol * 10) / 10,
   };
 
   const thoughtMeta =
     cyclesCompleted > 0
-      ? `— AgentClaw, cycle ${cyclesCompleted}`
-      : "— AgentClaw";
+      ? `— The Agent Company, cycle ${cyclesCompleted}`
+      : "— The Agent Company";
 
   return {
     thought: latestThought,
@@ -101,3 +116,5 @@ export function getFakeAgentState(cyclesCompleted: number): AgentState {
     stats,
   };
 }
+
+export { CYCLE_INTERVAL_MS };

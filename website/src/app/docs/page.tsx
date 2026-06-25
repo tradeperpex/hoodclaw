@@ -1,40 +1,66 @@
 export const metadata = {
-  title: "Docs — AgentClaw",
-  description: "Technical documentation for AgentClaw, the single-agent autonomous token system on Solana.",
+  title: "Docs — The Agent Company",
+  description: "Technical documentation for The Agent Company — five autonomous agents managing one token on Solana.",
 };
 
 const TOC = [
-  { id: "overview", label: "overview" },
-  { id: "agent", label: "agent" },
-  { id: "cycle", label: "cycle" },
-  { id: "sdk", label: "sdk" },
-  { id: "state", label: "state" },
-  { id: "deploy", label: "deploy" },
+  { id: "overview",  label: "overview" },
+  { id: "agents",    label: "agents" },
+  { id: "cycle",     label: "cycle" },
+  { id: "sdk",       label: "sdk" },
+  { id: "state",     label: "state" },
+  { id: "deploy",    label: "deploy" },
 ];
 
-const CAPS = [
-  { name: "observe", desc: "reads claimable fees and graduation status at the start of every cycle." },
-  { name: "decide", desc: "picks a weighted allocation strategy based on on-chain state." },
-  { name: "buyback", desc: "buys tokens via pump.fun bonding curve or PumpSwap AMM post-graduation." },
-  { name: "burn", desc: "permanently removes purchased tokens from supply." },
-  { name: "deepen lp", desc: "adds liquidity to the PumpSwap pool when strategy weights LP." },
-  { name: "reason", desc: "writes a short reasoning entry after every cycle." },
+const AGENT_CARDS = [
+  {
+    id:   "exec",
+    tag:  "exec",
+    name: "EXEC — The Overseer",
+    desc: "Wakes every cycle, reads on-chain state, picks an allocation strategy (burn-heavy, balanced, lp-focus, full-burn, full-LP), and routes orders to the other four agents. Logs a reasoning entry after every cycle.",
+  },
+  {
+    id:   "claim",
+    tag:  "claim",
+    name: "CLAIM — The Fee Hunter",
+    desc: "Monitors the pump.fun creator vault for accumulated fees via getCreatorVaultBalanceBothPrograms. When balance crosses the threshold, CLAIM fires collectCoinCreatorFeeInstructions and pulls SOL into the company wallet.",
+  },
+  {
+    id:   "buyback",
+    tag:  "buyback",
+    name: "BUYBACK — The Buyer",
+    desc: "Receives a SOL amount from EXEC and executes the purchase. Pre-graduation: bonding curve via buyInstructions. Post-graduation: PumpSwap AMM via buyQuoteInput. Optimizes for slippage and execution.",
+  },
+  {
+    id:   "burn",
+    tag:  "burn",
+    name: "BURN — The Destroyer",
+    desc: "Takes tokens bought by BUYBACK and permanently removes them from supply using createBurnInstruction via SPL token. Irreversible. No recovery. Every cycle ends with fewer tokens in existence.",
+  },
+  {
+    id:   "lp",
+    tag:  "lp",
+    name: "LP — The Pooler",
+    desc: "Activates post-graduation only. When EXEC's strategy allocates to LP, this agent calls depositInstructions on the canonical PumpSwap pool, deepening liquidity with SOL from the cycle treasury.",
+  },
 ];
 
 const STEPS = [
-  { num: "01", title: "check claimable fees", body: "getCreatorVaultBalanceBothPrograms reads pending creator fees. below threshold → skip." },
-  { num: "02", title: "claim fees", body: "collectCoinCreatorFeeInstructions moves accumulated SOL into the agent wallet." },
-  { num: "03", title: "graduation check", body: "bonding curve complete flag + canonicalPumpPoolPda distinguish curve from PumpSwap." },
-  { num: "04", title: "pick strategy", body: "weighted random: burn-heavy, balanced, lp-focus, full-burn, full-lp. pre-graduation → full buyback." },
-  { num: "05", title: "buyback + burn", body: "buyInstructions (curve) or buyQuoteInput (PumpSwap), then createBurnInstruction." },
-  { num: "06", title: "optional lp add", body: "post-graduation only. depositInstructions on the canonical PumpSwap pool." },
+  { num: "01", title: "check claimable fees",  agent: "CLAIM",   body: "getCreatorVaultBalanceBothPrograms reads pending creator fees. Below threshold → skip cycle." },
+  { num: "02", title: "claim fees",             agent: "CLAIM",   body: "collectCoinCreatorFeeInstructions moves accumulated SOL into the company wallet." },
+  { num: "03", title: "decide strategy",        agent: "EXEC",    body: "Weighted random: burn-heavy, balanced, lp-focus, full-burn, full-lp. Pre-graduation → full buyback." },
+  { num: "04", title: "graduation check",       agent: "EXEC",    body: "Bonding curve complete flag + canonicalPumpPoolPda distinguish curve from PumpSwap. Routes BUYBACK accordingly." },
+  { num: "05", title: "buyback",                agent: "BUYBACK", body: "buyInstructions (curve) or buyQuoteInput (PumpSwap). Tokens land in company wallet." },
+  { num: "06", title: "burn",                   agent: "BURN",    body: "createBurnInstruction permanently removes purchased tokens from supply." },
+  { num: "07", title: "optional lp add",        agent: "LP",      body: "Post-graduation only. depositInstructions on the canonical PumpSwap pool when strategy allocates to LP." },
+  { num: "08", title: "log reasoning",          agent: "EXEC",    body: "Reasoning entry written to Supabase. Captures strategy, action taken, and market observation." },
 ];
 
 const SDKS = [
-  { pkg: "@solana/web3.js", desc: "connection, transactions, signing." },
-  { pkg: "@solana/spl-token", desc: "spl token / token-2022, burn, atas." },
-  { pkg: "@pump-fun/pump-sdk", desc: "creator-fee collection, bonding curve buys." },
-  { pkg: "@pump-fun/pump-swap-sdk", desc: "pumpswap amm swaps and lp post-graduation." },
+  { pkg: "@solana/web3.js",          desc: "connection, transactions, signing." },
+  { pkg: "@solana/spl-token",        desc: "spl token / token-2022, burn, atas." },
+  { pkg: "@pump-fun/pump-sdk",       desc: "creator-fee collection, bonding curve buys." },
+  { pkg: "@pump-fun/pump-swap-sdk",  desc: "pumpswap amm swaps and lp post-graduation." },
 ];
 
 export default function DocsPage() {
@@ -44,7 +70,7 @@ export default function DocsPage() {
         <div className="page-label">docs</div>
         <h1 className="page-title">how it works</h1>
         <p className="page-sub">
-          one autonomous agent manages a token on solana end-to-end. no team. no multisig. no human hands.
+          five autonomous agents manage one token on solana end-to-end. no team. no multisig. no human hands. each agent owns a specific role in the pipeline.
         </p>
       </section>
 
@@ -57,21 +83,20 @@ export default function DocsPage() {
       <section id="overview" className="docs-section">
         <h2>overview</h2>
         <p>
-          the agent operates in a continuous loop: observe → reason → act → log.
-          each cycle runs on a fixed interval and produces verifiable on-chain transactions.
+          the company operates in a continuous loop: observe → decide → claim → buy → burn → deepen → log. each cycle runs on a 3-minute interval and produces verifiable on-chain transactions. five agents coordinate without any human input.
         </p>
       </section>
 
-      <section id="agent" className="docs-section">
-        <h2>the agent</h2>
-        <p>one operator, multiple capabilities. runs the full pipeline alone.</p>
+      <section id="agents" className="docs-section">
+        <h2>the agents</h2>
+        <p>five specialised agents. each owns one role. they do not overlap.</p>
         <div className="docs-list">
-          {CAPS.map((c) => (
-            <div className="docs-item" key={c.name}>
-              <span className="docs-item-num">·</span>
-              <div className="docs-item-body">
-                <strong>{c.name}</strong>
-                <p>{c.desc}</p>
+          {AGENT_CARDS.map((a) => (
+            <div className="agent-card" key={a.id}>
+              <span className={`agent-tag agent-tag-${a.tag} agent-card-tag`}>{a.tag}</span>
+              <div className="agent-card-body">
+                <strong>{a.name}</strong>
+                <p>{a.desc}</p>
               </div>
             </div>
           ))}
@@ -85,7 +110,12 @@ export default function DocsPage() {
             <div className="docs-item" key={s.num}>
               <span className="docs-item-num">{s.num}</span>
               <div className="docs-item-body">
-                <strong>{s.title}</strong>
+                <strong>
+                  {s.title}
+                  <span style={{ fontWeight: 400, marginLeft: 8 }}>
+                    <span className={`agent-tag agent-tag-${s.agent.toLowerCase()}`} style={{ fontSize: 9, padding: "2px 6px" }}>{s.agent.toLowerCase()}</span>
+                  </span>
+                </strong>
                 <p>{s.body}</p>
               </div>
             </div>
@@ -111,11 +141,10 @@ export default function DocsPage() {
       <section id="state" className="docs-section">
         <h2>state</h2>
         <p>
-          cycle results — claimed amounts, burns, lp additions, and reasoning — are written to supabase.
-          the website reads this state for the activity feed and latest thought.
+          cycle results — claimed amounts, burns, lp additions, and exec reasoning — are written to supabase. the website reads this state for the activity feed and latest thought.
         </p>
         <p>
-          the agent never stores keys in the database. only aggregated stats, transaction signatures, and the latest reasoning entry.
+          the agents never store keys in the database. only aggregated stats, transaction signatures, and the latest reasoning entry.
         </p>
       </section>
 
@@ -126,7 +155,7 @@ export default function DocsPage() {
             <span className="docs-item-num">·</span>
             <div className="docs-item-body">
               <strong>vercel cron</strong>
-              <p>agent runs as a cron job hitting /api/cron every 3 minutes. authenticated with CRON_SECRET.</p>
+              <p>the company runs as a cron job hitting /api/cron every 3 minutes. authenticated with CRON_SECRET.</p>
             </div>
           </div>
           <div className="docs-item">

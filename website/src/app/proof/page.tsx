@@ -7,16 +7,14 @@ function shortSig(sig: string) {
   return sig.slice(0, 4) + "…" + sig.slice(-4);
 }
 
-function actionLabel(action: string) {
-  const map: Record<string, string> = {
-    "Claimed fees": "claim",
-    Buyback: "buyback",
-    "Burned tokens": "burn",
-    "Added LP": "lp",
-    Scanned: "scan",
-  };
-  return map[action] ?? action.toLowerCase();
-}
+const ACTION_AGENT: Record<string, string> = {
+  "Claimed fees": "CLAIM",
+  "Claim":        "CLAIM",
+  "Buyback":      "BUYBACK",
+  "Burned tokens":"BURN",
+  "Added LP":     "LP",
+  "Scanned":      "EXEC",
+};
 
 export default function ProofPage() {
   const [entries, setEntries] = useState<AgentFeedEntry[]>([]);
@@ -43,7 +41,7 @@ export default function ProofPage() {
         <div className="page-label">proof</div>
         <h1 className="page-title">on-chain activity</h1>
         <p className="page-sub">
-          Every transaction the agent executes — recorded on Solana and verifiable by anyone.
+          Every transaction the company executes — recorded on Solana and verifiable by anyone. Five agents, every action logged.
         </p>
       </section>
 
@@ -58,28 +56,34 @@ export default function ProofPage() {
         {loading ? (
           <p className="empty">loading…</p>
         ) : actions.length === 0 ? (
-          <p className="empty">no transactions yet. the agent logs every claim, buyback, burn and lp add here once the first cycle completes.</p>
+          <p className="empty">no transactions yet. the agents log every claim, buyback, burn and lp add here once the first cycle completes.</p>
         ) : (
           <div className="feed">
-            {actions.map((entry, i) => (
-              <div className="feed-row" key={i}>
-                <div className="feed-meta">
-                  <span>{actionLabel(entry.action)}</span>
-                  <span>{entry.time}</span>
+            {actions.map((entry, i) => {
+              const agent = ACTION_AGENT[entry.action] ?? "EXEC";
+              return (
+                <div className="feed-row" key={i}>
+                  <div className="feed-meta">
+                    <div className="feed-meta-agent">
+                      <span className={`agent-tag agent-tag-${agent.toLowerCase()}`}>{agent.toLowerCase()}</span>
+                      <span>{entry.action?.toLowerCase()}</span>
+                    </div>
+                    <span>{entry.time}</span>
+                  </div>
+                  <div className="feed-detail">{entry.detail}</div>
+                  {entry.sig && (
+                    <a
+                      href={`https://solscan.io/tx/${entry.sig}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="feed-link"
+                    >
+                      {shortSig(entry.sig)} ↗
+                    </a>
+                  )}
                 </div>
-                <div className="feed-detail">{entry.detail}</div>
-                {entry.sig && (
-                  <a
-                    href={`https://solscan.io/tx/${entry.sig}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="feed-link"
-                  >
-                    {shortSig(entry.sig)} ↗
-                  </a>
-                )}
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
       </section>

@@ -1,8 +1,10 @@
 import { ImageResponse } from "next/og";
 
-export const alt = "AgentClaw — one autonomous agent, one token";
+export const alt = "The Agent Company — five autonomous agents, one token";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
+
+const AGENTS = ["EXEC", "CLAIM", "BUYBACK", "BURN", "LP"];
 
 export default function OpenGraphImage() {
   return new ImageResponse(
@@ -32,60 +34,51 @@ export default function OpenGraphImage() {
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
-            gap: 28,
+            gap: 32,
           }}
         >
           <div
             style={{
-              width: 72,
-              height: 72,
-              border: "2px solid #0a0a0a",
-              borderRadius: 12,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              position: "relative",
-            }}
-          >
-            <div style={{ width: 28, height: 28, border: "2px solid #0a0a0a", borderRadius: "50%" }} />
-            <div
-              style={{
-                position: "absolute",
-                width: 2,
-                height: 44,
-                background: "#0a0a0a",
-                top: 14,
-              }}
-            />
-            <div
-              style={{
-                position: "absolute",
-                width: 44,
-                height: 2,
-                background: "#0a0a0a",
-                left: 14,
-              }}
-            />
-          </div>
-          <div
-            style={{
-              fontSize: 72,
+              fontSize: 64,
               fontWeight: 700,
               letterSpacing: "-0.04em",
               color: "#0a0a0a",
             }}
           >
-            AgentClaw
+            THE AGENT COMPANY
           </div>
           <div
             style={{
-              fontSize: 22,
-              letterSpacing: "0.28em",
+              display: "flex",
+              gap: 16,
+            }}
+          >
+            {AGENTS.map((a) => (
+              <div
+                key={a}
+                style={{
+                  fontSize: 13,
+                  fontWeight: 600,
+                  letterSpacing: "1px",
+                  padding: "6px 14px",
+                  border: "1px solid #d4d4d4",
+                  color: a === "EXEC" ? "#ffffff" : "#0a0a0a",
+                  background: a === "EXEC" ? "#0a0a0a" : "transparent",
+                }}
+              >
+                {a}
+              </div>
+            ))}
+          </div>
+          <div
+            style={{
+              fontSize: 18,
+              letterSpacing: "0.22em",
               textTransform: "uppercase",
               color: "#737373",
             }}
           >
-            one agent · one token · no human hands
+            five agents · one token · no human hands
           </div>
         </div>
       </div>

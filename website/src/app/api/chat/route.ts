@@ -1,16 +1,21 @@
 import { NextResponse } from "next/server";
-import { chat, type ChatMessage } from "@/lib/agent/chat";
+import { chat, type ChatMessage, type AgentId } from "@/lib/agent/chat";
 
 export const maxDuration = 30;
 export const dynamic = "force-dynamic";
 
 const MAX_MESSAGE_LENGTH = 1000;
 const MAX_MESSAGES = 30;
+const VALID_AGENTS: AgentId[] = ["EXEC", "CLAIM", "BUYBACK", "BURN", "LP"];
 
 export async function POST(req: Request) {
   try {
     const body = await req.json().catch(() => null);
     const messages = (body?.messages ?? []) as ChatMessage[];
+    const agentRaw = (body?.agent ?? "EXEC") as string;
+    const agentId: AgentId = VALID_AGENTS.includes(agentRaw as AgentId)
+      ? (agentRaw as AgentId)
+      : "EXEC";
 
     if (!Array.isArray(messages) || messages.length === 0) {
       return NextResponse.json({ error: "messages required" }, { status: 400 });
@@ -34,7 +39,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "last message must be from user" }, { status: 400 });
     }
 
-    const reply = await chat(messages);
+    const reply = await chat(messages, agentId);
     return NextResponse.json({ reply });
   } catch (err) {
     console.error("[chat-api]", err);

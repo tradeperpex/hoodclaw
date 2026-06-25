@@ -1,6 +1,6 @@
 export const metadata = {
-  title: "Roadmap — AgentClaw",
-  description: "What we've built, what's next, and where AgentClaw is heading.",
+  title: "Roadmap — The Agent Company",
+  description: "What we've built, what's next, and where The Agent Company is heading.",
 };
 
 interface Phase {
@@ -16,12 +16,13 @@ const phases: Phase[] = [
     id: "01",
     title: "foundation",
     status: "completed",
-    description: "the autonomous agent — live on solana, running 24/7.",
+    description: "the company comes online — five agents running 24/7 on solana.",
     items: [
-      "single-agent buyback & burn engine",
-      "on-chain proof of work",
-      "real-time dashboard",
-      "ai reasoning after every cycle",
+      "exec, claim, buyback, burn, lp agents deployed",
+      "on-chain proof of work for every cycle",
+      "real-time activity feed and stats dashboard",
+      "exec reasoning log after every cycle",
+      "multi-agent chat interface",
       "technical documentation",
     ],
   },
@@ -29,33 +30,34 @@ const phases: Phase[] = [
     id: "02",
     title: "deeper mind",
     status: "active",
-    description: "richer reasoning. full transparency into every decision.",
+    description: "richer inter-agent reasoning. full transparency into every decision and handoff.",
     items: [
-      "reasoning history explorer",
-      "decision timeline with before/after state",
+      "per-agent reasoning history explorer",
+      "agent-to-agent decision timeline with before/after state",
       "strategy weighting and tuning",
-      "advanced analytics & cycle breakdowns",
+      "advanced analytics and cycle breakdowns",
+      "agent activity heatmap",
     ],
   },
   {
     id: "03",
     title: "launch platform",
     status: "upcoming",
-    description: "let anyone deploy their own agent-managed token.",
+    description: "let anyone deploy their own five-agent company for any token.",
     items: [
-      "one-click agent + token deployment",
-      "custom strategy profiles",
+      "one-click company + token deployment",
+      "custom strategy profiles per agent",
       "agent configuration dashboard",
-      "shared infrastructure",
+      "shared infrastructure and shared agent intelligence",
     ],
   },
   {
     id: "04",
     title: "ecosystem",
     status: "upcoming",
-    description: "a network of single-agent tokens, interacting and evolving.",
+    description: "a network of agent companies, interacting and evolving across chains.",
     items: [
-      "agent-to-agent communication",
+      "cross-company agent communication",
       "community strategy marketplace",
       "multi-chain expansion",
       "open-source agent sdk",
@@ -78,7 +80,7 @@ export default function RoadmapPage() {
         <div className="page-label">roadmap</div>
         <h1 className="page-title">what comes next</h1>
         <p className="page-sub">
-          {done} of {phases.length} phases shipped. every phase is a step toward tokens that manage themselves.
+          {done} of {phases.length} phases shipped. every phase is a step toward token companies that run themselves entirely.
         </p>
       </section>
 

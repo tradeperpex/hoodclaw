@@ -1,5 +1,5 @@
 /**
- * AgentClaw agent – core cycle logic.
+ * The Agent Company agent – core cycle logic.
  * Én autonom agent: collect creator fees (pump.fun) → 100% buyback + burn
  * (+ LP via PumpSwap hvis token er graduated til AMM).
  *

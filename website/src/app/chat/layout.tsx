@@ -1,6 +1,6 @@
 export const metadata = {
-  title: "Chat — AgentClaw",
-  description: "Talk to CLAW, the autonomous agent managing the token.",
+  title: "Chat — The Agent Company",
+  description: "Talk to any of the five autonomous agents managing the token.",
 };
 
 export default function ChatLayout({ children }: { children: React.ReactNode }) {

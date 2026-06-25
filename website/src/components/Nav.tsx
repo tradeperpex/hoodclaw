@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-const X_URL = "https://x.com/agentclawfun";
+const X_URL = "https://x.com/theagentco";
 
 const PUMP_URL = process.env.NEXT_PUBLIC_MINT_ADDRESS
   ? `https://pump.fun/coin/${process.env.NEXT_PUBLIC_MINT_ADDRESS}`
@@ -9,7 +9,7 @@ const PUMP_URL = process.env.NEXT_PUBLIC_MINT_ADDRESS
 export default function Nav() {
   return (
     <header className="nav">
-      <Link href="/" className="nav-logo">AGENTCLAW</Link>
+      <Link href="/" className="nav-logo">THE AGENT CO.</Link>
       <nav className="nav-links">
         <Link href="/proof">proof</Link>
         <Link href="/thoughts">thoughts</Link>
