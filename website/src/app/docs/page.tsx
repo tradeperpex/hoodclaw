@@ -1,8 +1,3 @@
-export const metadata = {
-  title: "Docs — The Agent Company",
-  description: "Technical documentation for The Agent Company — five autonomous agents managing one token on Solana.",
-};
-
 const TOC = [
   { id: "overview",  label: "overview" },
   { id: "agents",    label: "agents" },
@@ -16,31 +11,31 @@ const AGENT_CARDS = [
   {
     id:   "exec",
     tag:  "exec",
-    name: "EXEC — The Overseer",
+    name: "EXEC · The Overseer",
     desc: "Wakes every cycle, reads on-chain state, picks an allocation strategy (burn-heavy, balanced, lp-focus, full-burn, full-LP), and routes orders to the other four agents. Logs a reasoning entry after every cycle.",
   },
   {
     id:   "claim",
     tag:  "claim",
-    name: "CLAIM — The Fee Hunter",
+    name: "CLAIM · The Fee Hunter",
     desc: "Monitors the pump.fun creator vault for accumulated fees via getCreatorVaultBalanceBothPrograms. When balance crosses the threshold, CLAIM fires collectCoinCreatorFeeInstructions and pulls SOL into the company wallet.",
   },
   {
     id:   "buyback",
     tag:  "buyback",
-    name: "BUYBACK — The Buyer",
+    name: "BUYBACK · The Buyer",
     desc: "Receives a SOL amount from EXEC and executes the purchase. Pre-graduation: bonding curve via buyInstructions. Post-graduation: PumpSwap AMM via buyQuoteInput. Optimizes for slippage and execution.",
   },
   {
     id:   "burn",
     tag:  "burn",
-    name: "BURN — The Destroyer",
+    name: "BURN · The Destroyer",
     desc: "Takes tokens bought by BUYBACK and permanently removes them from supply using createBurnInstruction via SPL token. Irreversible. No recovery. Every cycle ends with fewer tokens in existence.",
   },
   {
     id:   "lp",
     tag:  "lp",
-    name: "LP — The Pooler",
+    name: "LP · The Pooler",
     desc: "Activates post-graduation only. When EXEC's strategy allocates to LP, this agent calls depositInstructions on the canonical PumpSwap pool, deepening liquidity with SOL from the cycle treasury.",
   },
 ];
@@ -70,7 +65,7 @@ export default function DocsPage() {
         <div className="page-label">docs</div>
         <h1 className="page-title">how it works</h1>
         <p className="page-sub">
-          five autonomous agents manage one token on solana end-to-end. no team. no multisig. no human hands. each agent owns a specific role in the pipeline.
+          FableClaw is an autonomous agent powered by Claude Fable 5. It manages one token on Solana end-to-end. No team. No multisig. No human hands.
         </p>
       </section>
 
@@ -83,13 +78,13 @@ export default function DocsPage() {
       <section id="overview" className="docs-section">
         <h2>overview</h2>
         <p>
-          the company operates in a continuous loop: observe → decide → claim → buy → burn → deepen → log. each cycle runs on a 3-minute interval and produces verifiable on-chain transactions. five agents coordinate without any human input.
+          FableClaw operates in a continuous loop: observe, decide, claim, buy, burn, deepen, log. Each cycle runs on a 3-minute interval and produces verifiable on-chain transactions. Claude Fable 5 drives the reasoning. Five execution roles handle the on-chain work.
         </p>
       </section>
 
       <section id="agents" className="docs-section">
-        <h2>the agents</h2>
-        <p>five specialised agents. each owns one role. they do not overlap.</p>
+        <h2>execution roles</h2>
+        <p>One Fable 5 mind. Five specialised on-chain roles. Each owns one step in the pipeline.</p>
         <div className="docs-list">
           {AGENT_CARDS.map((a) => (
             <div className="agent-card" key={a.id}>
@@ -141,7 +136,7 @@ export default function DocsPage() {
       <section id="state" className="docs-section">
         <h2>state</h2>
         <p>
-          cycle results — claimed amounts, burns, lp additions, and exec reasoning — are written to supabase. the website reads this state for the activity feed and latest thought.
+          cycle results · claimed amounts, burns, lp additions, and exec reasoning · are written to supabase. the website reads this state for the activity feed and latest thought.
         </p>
         <p>
           the agents never store keys in the database. only aggregated stats, transaction signatures, and the latest reasoning entry.

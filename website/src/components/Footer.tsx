@@ -1,15 +1,26 @@
-const X_URL = "https://x.com/agentcompanyfun";
-
-const PUMP_URL = process.env.NEXT_PUBLIC_MINT_ADDRESS
-  ? `https://pump.fun/coin/${process.env.NEXT_PUBLIC_MINT_ADDRESS}`
-  : "https://pump.fun";
+import Link from "next/link";
+import { BRAND_NAME, X_URL, getPumpUrl } from "@/lib/brand";
 
 export default function Footer() {
+  const pumpUrl = getPumpUrl();
+
   return (
     <footer className="site-foot">
-      <span className="site-foot-brand">the agent company</span>
-      <a href={X_URL} target="_blank" rel="noopener noreferrer">x ↗</a>
-      <a href={PUMP_URL} target="_blank" rel="noopener noreferrer">buy ↗</a>
+      <div className="site-foot-links">
+        <Link className="is-active" href="/">
+          home
+        </Link>
+        <Link href="/proof">proof</Link>
+        <Link href="/thoughts">thoughts</Link>
+        <Link href="/docs">docs</Link>
+        <a href={X_URL} target="_blank" rel="noopener noreferrer">
+          x
+        </a>
+        <a href={pumpUrl} target="_blank" rel="noopener noreferrer">
+          buy
+        </a>
+      </div>
+      <p className="site-foot-note">{BRAND_NAME}</p>
     </footer>
   );
 }

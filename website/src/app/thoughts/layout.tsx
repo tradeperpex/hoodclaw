@@ -1,6 +1,6 @@
 export const metadata = {
-  title: "Thoughts — The Agent Company",
-  description: "Live reasoning feed from all five agents: EXEC, CLAIM, BUYBACK, BURN, and LP.",
+  title: "Thoughts",
+  description: "Reasoning and cycle logs from FableClaw, powered by Claude Fable 5.",
 };
 
 export default function ThoughtsLayout({ children }: { children: React.ReactNode }) {

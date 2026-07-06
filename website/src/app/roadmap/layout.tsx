@@ -1,6 +1,6 @@
 export const metadata = {
-  title: "Roadmap — The Agent Company",
-  description: "What we've built, what's next, and where The Agent Company is heading.",
+  title: "Roadmap",
+  description: "What FableClaw has shipped and what comes next for the Claude Fable 5 agent.",
 };
 
 export default function RoadmapLayout({ children }: { children: React.ReactNode }) {

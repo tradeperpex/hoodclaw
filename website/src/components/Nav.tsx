@@ -1,24 +1,75 @@
+"use client";
+
 import Link from "next/link";
+import { usePathname } from "next/navigation";
+import BrandLogo from "@/components/BrandLogo";
+import StatusPulse from "@/components/StatusPulse";
+import { FABLE_MODEL, X_URL, getPumpUrl } from "@/lib/brand";
 
-const X_URL = "https://x.com/agentcompanyfun";
-
-const PUMP_URL = process.env.NEXT_PUBLIC_MINT_ADDRESS
-  ? `https://pump.fun/coin/${process.env.NEXT_PUBLIC_MINT_ADDRESS}`
-  : "https://pump.fun";
+const LINKS = [
+  { href: "/", label: "home" },
+  { href: "/proof", label: "proof" },
+  { href: "/thoughts", label: "thoughts" },
+  { href: "/docs", label: "docs" },
+  { href: "/roadmap", label: "roadmap" },
+] as const;
 
 export default function Nav() {
+  const pathname = usePathname();
+  const pumpUrl = getPumpUrl();
+
   return (
-    <header className="nav">
-      <Link href="/" className="nav-logo">THE AGENT CO.</Link>
-      <nav className="nav-links">
-        <Link href="/proof">proof</Link>
-        <Link href="/thoughts">thoughts</Link>
-        <Link href="/chat">chat</Link>
-        <Link href="/docs">docs</Link>
-        <Link href="/roadmap">roadmap</Link>
-        <a href={X_URL} target="_blank" rel="noopener noreferrer">x ↗</a>
-        <a href={PUMP_URL} target="_blank" rel="noopener noreferrer">buy ↗</a>
-      </nav>
+    <header className="nav-shell">
+      <div className="nav-bar">
+        <Link href="/" className="nav-brand">
+          <BrandLogo size={22} />
+          <span>
+            fable<span className="nav-brand-accent">claw</span>
+          </span>
+        </Link>
+
+        <nav className="nav-links" aria-label="Main">
+          {LINKS.map((link) => {
+            const active =
+              link.href === "/"
+                ? pathname === "/"
+                : pathname.startsWith(link.href);
+            return (
+              <Link
+                key={link.href}
+                href={link.href}
+                className={active ? "is-active" : undefined}
+              >
+                {link.label}
+              </Link>
+            );
+          })}
+        </nav>
+
+        <div className="nav-actions">
+          <span className="nav-model">{FABLE_MODEL}</span>
+          <a
+            className="nav-icon-link"
+            href={X_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="X"
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+            </svg>
+          </a>
+          <StatusPulse label="active" />
+          <a
+            className="nav-cta"
+            href={pumpUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            buy
+          </a>
+        </div>
+      </div>
     </header>
   );
 }

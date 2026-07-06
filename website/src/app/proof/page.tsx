@@ -41,7 +41,7 @@ export default function ProofPage() {
         <div className="page-label">proof</div>
         <h1 className="page-title">on-chain activity</h1>
         <p className="page-sub">
-          Every transaction the company executes — recorded on Solana and verifiable by anyone. Five agents, every action logged.
+          Every transaction FableClaw executes is recorded on Solana and verifiable by anyone. Powered by Claude Fable 5, every action logged.
         </p>
       </section>
 

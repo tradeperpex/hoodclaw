@@ -1,10 +1,11 @@
 import { ImageResponse } from "next/og";
+import { BRAND_NAME, BRAND_SHORT, FABLE_MODEL } from "@/lib/brand";
 
-export const alt = "The Agent Company — five autonomous agents, one token";
+export const alt = `${BRAND_NAME} · ${FABLE_MODEL} agent on Solana`;
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
-const AGENTS = ["EXEC", "CLAIM", "BUYBACK", "BURN", "LP"];
+const ROLES = ["EXEC", "CLAIM", "BUYBACK", "BURN", "LP"];
 
 export default function OpenGraphImage() {
   return new ImageResponse(
@@ -17,15 +18,16 @@ export default function OpenGraphImage() {
           flexDirection: "column",
           justifyContent: "center",
           alignItems: "center",
-          background: "#ffffff",
-          fontFamily: "ui-monospace, SFMono-Regular, Menlo, monospace",
+          background: "#fffbf7",
+          fontFamily: "ui-sans-serif, system-ui, sans-serif",
         }}
       >
         <div
           style={{
             position: "absolute",
             inset: 48,
-            border: "1px solid #e5e5e5",
+            border: "1px solid rgba(194, 65, 12, 0.18)",
+            borderRadius: 24,
             display: "flex",
           }}
         />
@@ -34,36 +36,43 @@ export default function OpenGraphImage() {
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
-            gap: 32,
+            gap: 28,
           }}
         >
           <div
             style={{
-              fontSize: 64,
+              fontSize: 72,
               fontWeight: 700,
               letterSpacing: "-0.04em",
-              color: "#0a0a0a",
+              color: "#1a1008",
             }}
           >
-            THE AGENT COMPANY
+            {BRAND_NAME}
           </div>
           <div
             style={{
-              display: "flex",
-              gap: 16,
+              fontSize: 22,
+              letterSpacing: "0.08em",
+              textTransform: "uppercase",
+              color: "#e8590c",
             }}
           >
-            {AGENTS.map((a) => (
+            {FABLE_MODEL}
+          </div>
+          <div style={{ display: "flex", gap: 14 }}>
+            {ROLES.map((a) => (
               <div
                 key={a}
                 style={{
+                  fontFamily: "ui-monospace, monospace",
                   fontSize: 13,
                   fontWeight: 600,
                   letterSpacing: "1px",
                   padding: "6px 14px",
-                  border: "1px solid #d4d4d4",
-                  color: a === "EXEC" ? "#ffffff" : "#0a0a0a",
-                  background: a === "EXEC" ? "#0a0a0a" : "transparent",
+                  borderRadius: 999,
+                  border: "1px solid rgba(232, 89, 12, 0.24)",
+                  color: a === "EXEC" ? "#ffffff" : "#e8590c",
+                  background: a === "EXEC" ? "#c2410c" : "transparent",
                 }}
               >
                 {a}
@@ -72,13 +81,14 @@ export default function OpenGraphImage() {
           </div>
           <div
             style={{
+              fontFamily: "ui-monospace, monospace",
               fontSize: 18,
-              letterSpacing: "0.22em",
+              letterSpacing: "0.18em",
               textTransform: "uppercase",
-              color: "#737373",
+              color: "#a8927e",
             }}
           >
-            five agents · one token · no human hands
+            {BRAND_SHORT}
           </div>
         </div>
       </div>

@@ -20,9 +20,9 @@ export default function ThoughtsPage() {
     <div className="page">
       <section>
         <div className="page-label">thoughts</div>
-        <h1 className="page-title">inside the company</h1>
+        <h1 className="page-title">inside the claw</h1>
         <p className="page-sub">
-          Every cycle, EXEC observes the on-chain state, coordinates the other agents, and logs a reasoning entry. Every action by CLAIM, BUYBACK, BURN, and LP is also recorded here.
+          Every cycle, FableClaw observes on-chain state, coordinates its execution roles, and logs a reasoning entry powered by Claude Fable 5.
         </p>
       </section>
 

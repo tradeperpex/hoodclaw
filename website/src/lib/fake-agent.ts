@@ -23,7 +23,7 @@ function actionToFeedEntry(action: CycleAction, cycleIndex: number): AgentFeedEn
       return {
         time,
         action: "Claim",
-        detail: `CLAIM collected ${action.totalSol.toFixed(2)} SOL — ${action.toTreasury.toFixed(2)} SOL to treasury`,
+        detail: `CLAIM collected ${action.totalSol.toFixed(2)} SOL, ${action.toTreasury.toFixed(2)} SOL to treasury`,
       };
     case "buyback":
       return {
@@ -105,8 +105,8 @@ export function getFakeAgentState(cyclesCompleted: number): AgentState {
 
   const thoughtMeta =
     cyclesCompleted > 0
-      ? `— The Agent Company, cycle ${cyclesCompleted}`
-      : "— The Agent Company";
+      ? `· FableClaw, cycle ${cyclesCompleted}`
+      : "· FableClaw";
 
   return {
     thought: latestThought,

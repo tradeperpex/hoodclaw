@@ -1,8 +1,3 @@
-export const metadata = {
-  title: "Roadmap — The Agent Company",
-  description: "What we've built, what's next, and where The Agent Company is heading.",
-};
-
 interface Phase {
   id: string;
   title: string;
@@ -16,13 +11,12 @@ const phases: Phase[] = [
     id: "01",
     title: "foundation",
     status: "completed",
-    description: "the company comes online — five agents running 24/7 on solana.",
+    description: "FableClaw goes live on Solana, powered by Claude Fable 5.",
     items: [
-      "exec, claim, buyback, burn, lp agents deployed",
+      "autonomous agent loop: claim, buyback, burn, lp",
       "on-chain proof of work for every cycle",
       "real-time activity feed and stats dashboard",
-      "exec reasoning log after every cycle",
-      "multi-agent chat interface",
+      "reasoning log after every cycle",
       "technical documentation",
     ],
   },
@@ -30,8 +24,9 @@ const phases: Phase[] = [
     id: "02",
     title: "deeper mind",
     status: "active",
-    description: "richer inter-agent reasoning. full transparency into every decision and handoff.",
+    description: "richer Fable 5 reasoning. full transparency into every decision and handoff.",
     items: [
+      "agent chat interface",
       "per-agent reasoning history explorer",
       "agent-to-agent decision timeline with before/after state",
       "strategy weighting and tuning",
@@ -43,7 +38,7 @@ const phases: Phase[] = [
     id: "03",
     title: "launch platform",
     status: "upcoming",
-    description: "let anyone deploy their own five-agent company for any token.",
+    description: "deploy your own FableClaw-style agent for any token.",
     items: [
       "one-click company + token deployment",
       "custom strategy profiles per agent",
@@ -80,14 +75,14 @@ export default function RoadmapPage() {
         <div className="page-label">roadmap</div>
         <h1 className="page-title">what comes next</h1>
         <p className="page-sub">
-          {done} of {phases.length} phases shipped. every phase is a step toward token companies that run themselves entirely.
+          {done} of {phases.length} phases shipped. FableClaw keeps getting sharper on Claude Fable 5.
         </p>
       </section>
 
       {phases.map((phase) => (
         <section key={phase.id} className="phase-block">
           <div className="phase-head">
-            <span className="phase-name">phase {phase.id} — {phase.title}</span>
+            <span className="phase-name">phase {phase.id} · {phase.title}</span>
             <span className="phase-status">{STATUS[phase.status]}</span>
           </div>
           <p className="phase-desc">{phase.description}</p>

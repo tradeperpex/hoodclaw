@@ -1,6 +1,6 @@
 export const metadata = {
-  title: "Proof — The Agent Company",
-  description: "Every on-chain action the five agents have executed, verifiable on Solana.",
+  title: "Proof",
+  description: "Autonomous agent powered by Claude Fable 5. On-chain proof of every FableClaw action.",
 };
 
 export default function ProofLayout({ children }: { children: React.ReactNode }) {

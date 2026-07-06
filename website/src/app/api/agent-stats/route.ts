@@ -14,7 +14,7 @@ export async function GET() {
     );
     const json = {
       thought: db?.thought ? sanitizeModelText(db.thought) : "Waiting for fees.",
-      thoughtMeta: db?.thought_meta ?? "— The Agent Company",
+      thoughtMeta: db?.thought_meta ?? "· FableClaw",
       feedEntries,
       updatedAt: db?.updated_at ?? null,
       stats: {
