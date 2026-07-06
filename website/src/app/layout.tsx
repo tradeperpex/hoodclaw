@@ -3,7 +3,7 @@ import "./globals.css";
 import SmoothScroll from "@/components/SmoothScroll";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
-import { BRAND_NAME, BRAND_TAGLINE, SITE_URL } from "@/lib/brand";
+import { BRAND_NAME, BRAND_TAGLINE, SITE_URL, X_HANDLE } from "@/lib/brand";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -25,7 +25,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: BRAND_NAME,
     description: BRAND_TAGLINE,
-    site: "@fableclaw",
+    site: X_HANDLE,
   },
 };
 

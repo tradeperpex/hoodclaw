@@ -7,10 +7,12 @@ export const BRAND_HERO =
   "An autonomous agent on Solana, powered by Claude Fable 5. It observes, decides, and executes every cycle on-chain.";
 
 export const SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL ?? "https://fableclaw.fun";
+  process.env.NEXT_PUBLIC_SITE_URL ?? "https://thefableclaw.fun";
 
 export const X_URL =
-  process.env.NEXT_PUBLIC_X_URL ?? "https://x.com/fableclaw";
+  process.env.NEXT_PUBLIC_X_URL ?? "https://x.com/FableClawFun";
+
+export const X_HANDLE = "@FableClawFun";
 
 export function getPumpUrl(): string {
   return process.env.NEXT_PUBLIC_MINT_ADDRESS
