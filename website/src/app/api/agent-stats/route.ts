@@ -5,7 +5,9 @@ import { sanitizeModelText } from "@/lib/agent/kie";
 type FeedEntry = { time?: string; action?: string; detail?: string; sig?: string; strategy?: string };
 
 /** Henter agent-data fra Supabase. Opdateres når du kører npm run buyback i agent/. */
-export async function GET() {
+export async function GET(request: Request) {
+  const fresh = new URL(request.url).searchParams.get("fresh") === "1";
+
   try {
     const db = await getAgentStats();
     const rawFeed: FeedEntry[] = Array.isArray(db?.feed_entries) ? db.feed_entries : [];
@@ -27,7 +29,9 @@ export async function GET() {
       },
     };
     return NextResponse.json(json, {
-      headers: { "Cache-Control": "public, s-maxage=30, stale-while-revalidate=60" },
+      headers: fresh
+        ? { "Cache-Control": "no-store, max-age=0" }
+        : { "Cache-Control": "public, s-maxage=15, stale-while-revalidate=30" },
     });
   } catch (err) {
     console.error("[agent-stats]", err);
