@@ -343,22 +343,6 @@ a { color: inherit; text-decoration: none; }
   line-height: 1.75;
   color: var(--mid);
 }
-.hero-ca-block { margin-top: 36px; }
-.hero-ca-label {
-  font-size: 11px;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--dim);
-}
-.hero-ca {
-  margin-top: 6px;
-  max-width: 360px;
-  font-family: var(--mono);
-  font-size: 13px;
-  line-height: 1.5;
-  word-break: break-all;
-  color: var(--mid);
-}
 .hero-buy {
   display: inline-block;
   margin-top: 28px;

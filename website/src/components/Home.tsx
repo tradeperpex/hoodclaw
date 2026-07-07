@@ -10,7 +10,6 @@ import {
   BRAND_SHORT,
   FABLE_MODEL,
   X_URL,
-  getMintAddress,
   getPumpUrl,
 } from "@/lib/brand";
 import { formatCompact, formatSol } from "@/lib/format-stats";
@@ -29,7 +28,6 @@ export default function Home() {
   const { stats, thought } = useAgentData();
   const log = useAgentLog();
   const pumpUrl = getPumpUrl();
-  const mint = getMintAddress();
 
   return (
     <div className="home">
@@ -39,13 +37,6 @@ export default function Home() {
           fable<span className="hero-accent">claw</span>
         </h1>
         <p className="hero-lede">{BRAND_HERO}</p>
-
-        {mint ? (
-          <div className="hero-ca-block">
-            <p className="hero-ca-label">CA</p>
-            <p className="hero-ca">{mint}</p>
-          </div>
-        ) : null}
 
         <a className="hero-buy" href={pumpUrl} target="_blank" rel="noopener noreferrer">
           buy on pump ↗
