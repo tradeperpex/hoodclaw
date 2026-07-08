@@ -1,16 +1,16 @@
-# FableClaw: What Happens When an AI Tries to Run Its Own Coin
+# HoodClaw: What Happens When an AI Tries to Run Its Own Coin
 
 Most tokens have a team behind them. Someone runs marketing. Someone holds the keys. Someone decides when to buy back, burn, or add liquidity.
 
-**FableClaw starts from a different premise.**
+**HoodClaw starts from a different premise.**
 
 It is an autonomous AI agent powered by **Claude Fable 5**, built to run **one coin** end to end without a human clicking buttons. No team making promises in Discord. No multisig you have to trust blindly. Just code, a wallet, and a loop that keeps running.
 
 ---
 
-## What is FableClaw?
+## What is HoodClaw?
 
-FableClaw is not a chatbot with a token attached to it.
+HoodClaw is not a chatbot with a token attached to it.
 
 It is an attempt to let an AI **own the process** around a coin: observe, decide, act, and record what it did and why.
 
@@ -38,7 +38,7 @@ That is not magic. It is a pipeline. The point is that **no one is sitting there
 
 ## One agent. Five roles.
 
-Under the surface, FableClaw is split into five execution roles:
+Under the surface, HoodClaw is split into five execution roles:
 
 | Role | What it does |
 |------|----------------|
@@ -48,21 +48,21 @@ Under the surface, FableClaw is split into five execution roles:
 | **BURN** | Permanently destroys tokens |
 | **LP** | Deepens liquidity after graduation |
 
-It is still **one agent story**: FableClaw with a grip on the coin. The roles are just how it structures the work so each step stays clear, repeatable, and visible.
+It is still **one agent story**: HoodClaw with a grip on the coin. The roles are just how it structures the work so each step stays clear, repeatable, and visible.
 
 ---
 
 ## Why Claude Fable 5?
 
-FableClaw is not just "AI-washed."
+HoodClaw is not just "AI-washed."
 
 The model is part of the product. **Claude Fable 5** is the layer that reasons about each cycle: what happened, what makes sense to do next, and how to log it. Execution is code and on-chain transactions. Reasoning is Fable 5.
 
-That makes FableClaw a simple question in project form:
+That makes HoodClaw a simple question in project form:
 
 > Can a modern agent model actually keep a simple, repeated process running without a human pushing it forward?
 
-That is what FableClaw is testing.
+That is what HoodClaw is testing.
 
 ---
 
@@ -70,7 +70,7 @@ That is what FableClaw is testing.
 
 The important part is not hype. It is **proof**.
 
-On [thefableclaw.fun](https://thefableclaw.fun) you can follow:
+On [hoodclaw.fun](https://hoodclaw.fun) you can follow:
 
 - **Treasury and stats** – what the agent has claimed, bought back, burned, and added to LP
 - **System log** – what is happening in real time
@@ -83,7 +83,7 @@ That is the whole idea: **no hidden hands, only visible code.**
 
 ---
 
-## What FableClaw is not
+## What HoodClaw is not
 
 It is worth being direct:
 
@@ -99,7 +99,7 @@ It is an experiment in autonomous token management. An AI trying to keep hold of
 
 Crypto has seen plenty of coins with big promises and small proof.
 
-FableClaw goes the other way: **less talk, more traceable behavior**.
+HoodClaw goes the other way: **less talk, more traceable behavior**.
 
 Not "trust us."
 More: **read the log, check the tx, follow the claw.**
@@ -108,9 +108,9 @@ More: **read the log, check the tx, follow the claw.**
 
 ## Follow along
 
-- **Website:** [thefableclaw.fun](https://thefableclaw.fun)
-- **X:** [@FableClawFun](https://x.com/FableClawFun)
+- **Website:** [hoodclaw.fun](https://hoodclaw.fun)
+- **X:** [@hoodclaw](https://x.com/hoodclaw)
 
-FableClaw runs. It thinks. It acts. It logs.
+HoodClaw runs. It thinks. It acts. It logs.
 
 **Powered by Claude Fable 5. One token. No human hands.**

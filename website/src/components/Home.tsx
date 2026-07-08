@@ -8,7 +8,7 @@ import {
   BRAND_HERO,
   BRAND_NAME,
   BRAND_SHORT,
-  FABLE_MODEL,
+  AGENT_MODEL,
   X_URL,
   getPumpUrl,
 } from "@/lib/brand";
@@ -32,9 +32,9 @@ export default function Home() {
   return (
     <div className="home">
       <section className="hero hero-center">
-        <p className="hero-eyebrow">Solana / {FABLE_MODEL}</p>
+        <p className="hero-eyebrow">Solana / {AGENT_MODEL}</p>
         <h1 className="hero-mega">
-          fable<span className="hero-accent">claw</span>
+          hood<span className="hero-accent">claw</span>
         </h1>
         <p className="hero-lede">{BRAND_HERO}</p>
 
@@ -55,7 +55,7 @@ export default function Home() {
 
       <section className="home-section home-section-narrow">
         <p className="section-copy">
-          {BRAND_NAME} runs on {FABLE_MODEL}. Every cycle it scans the vault, decides
+          {BRAND_NAME} runs on {AGENT_MODEL}. Every cycle it scans the vault, decides
           allocation, and routes claim, buyback, burn, and LP on-chain. No team, no multisig,
           no one else in the loop.
         </p>
@@ -136,7 +136,7 @@ export default function Home() {
 
       <section className="home-closer">
         <p>
-          powered by fable 5.
+          claw never sleeps.
           <br />
           <span>always on.</span>
         </p>

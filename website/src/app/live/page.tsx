@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useLiveAgentData } from "@/hooks/useLiveAgentData";
 import type { AgentFeedEntry } from "@/lib/agent-types";
-import { BRAND_NAME, FABLE_MODEL } from "@/lib/brand";
+import { BRAND_NAME, AGENT_MODEL } from "@/lib/brand";
 import { formatCompact, formatSol } from "@/lib/format-stats";
 
 const ACTION_AGENT: Record<string, string> = {
@@ -111,7 +111,7 @@ export default function LivePage() {
           <div>
             <h1 className="live-title">agent monitor</h1>
             <p className="live-sub">
-              {BRAND_NAME} · {FABLE_MODEL} · auto refresh every 5s
+              {BRAND_NAME} · {AGENT_MODEL} · auto refresh every 5s
             </p>
           </div>
         </div>

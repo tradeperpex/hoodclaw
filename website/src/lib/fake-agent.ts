@@ -105,8 +105,8 @@ export function getFakeAgentState(cyclesCompleted: number): AgentState {
 
   const thoughtMeta =
     cyclesCompleted > 0
-      ? `· FableClaw, cycle ${cyclesCompleted}`
-      : "· FableClaw";
+      ? `· HoodClaw, cycle ${cyclesCompleted}`
+      : "· HoodClaw";
 
   return {
     thought: latestThought,

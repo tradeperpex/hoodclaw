@@ -1,7 +1,7 @@
 import { ImageResponse } from "next/og";
-import { BRAND_NAME, BRAND_SHORT, FABLE_MODEL } from "@/lib/brand";
+import { BRAND_NAME, BRAND_SHORT, AGENT_MODEL } from "@/lib/brand";
 
-export const alt = `${BRAND_NAME} · ${FABLE_MODEL} agent on Solana`;
+export const alt = `${BRAND_NAME} · ${AGENT_MODEL} agent on Solana`;
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -18,7 +18,7 @@ export default function OpenGraphImage() {
           flexDirection: "column",
           justifyContent: "center",
           alignItems: "center",
-          background: "#fffbf7",
+          background: "#080a0c",
           fontFamily: "ui-sans-serif, system-ui, sans-serif",
         }}
       >
@@ -26,7 +26,7 @@ export default function OpenGraphImage() {
           style={{
             position: "absolute",
             inset: 48,
-            border: "1px solid rgba(194, 65, 12, 0.18)",
+            border: "1px solid rgba(61, 255, 168, 0.2)",
             borderRadius: 24,
             display: "flex",
           }}
@@ -44,7 +44,7 @@ export default function OpenGraphImage() {
               fontSize: 72,
               fontWeight: 700,
               letterSpacing: "-0.04em",
-              color: "#1a1008",
+              color: "#eef2f6",
             }}
           >
             {BRAND_NAME}
@@ -54,10 +54,10 @@ export default function OpenGraphImage() {
               fontSize: 22,
               letterSpacing: "0.08em",
               textTransform: "uppercase",
-              color: "#e8590c",
+              color: "#3dffa8",
             }}
           >
-            {FABLE_MODEL}
+            {AGENT_MODEL}
           </div>
           <div style={{ display: "flex", gap: 14 }}>
             {ROLES.map((a) => (
@@ -70,9 +70,9 @@ export default function OpenGraphImage() {
                   letterSpacing: "1px",
                   padding: "6px 14px",
                   borderRadius: 999,
-                  border: "1px solid rgba(232, 89, 12, 0.24)",
-                  color: a === "EXEC" ? "#ffffff" : "#e8590c",
-                  background: a === "EXEC" ? "#c2410c" : "transparent",
+                  border: "1px solid rgba(61, 255, 168, 0.28)",
+                  color: a === "EXEC" ? "#041008" : "#3dffa8",
+                  background: a === "EXEC" ? "#3dffa8" : "transparent",
                 }}
               >
                 {a}
@@ -85,7 +85,7 @@ export default function OpenGraphImage() {
               fontSize: 18,
               letterSpacing: "0.18em",
               textTransform: "uppercase",
-              color: "#a8927e",
+              color: "#5c6775",
             }}
           >
             {BRAND_SHORT}

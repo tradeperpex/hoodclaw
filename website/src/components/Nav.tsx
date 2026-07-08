@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import BrandLogo from "@/components/BrandLogo";
 import StatusPulse from "@/components/StatusPulse";
-import { FABLE_MODEL, X_URL, getPumpUrl } from "@/lib/brand";
+import { AGENT_MODEL, X_URL, getPumpUrl } from "@/lib/brand";
 
 const LINKS = [
   { href: "/", label: "home" },
@@ -24,7 +24,7 @@ export default function Nav() {
         <Link href="/" className="nav-brand">
           <BrandLogo size={22} />
           <span>
-            fable<span className="nav-brand-accent">claw</span>
+            hood<span className="nav-brand-accent">claw</span>
           </span>
         </Link>
 
@@ -47,7 +47,7 @@ export default function Nav() {
         </nav>
 
         <div className="nav-actions">
-          <span className="nav-model">{FABLE_MODEL}</span>
+          <span className="nav-model">{AGENT_MODEL}</span>
           <a
             className="nav-icon-link"
             href={X_URL}

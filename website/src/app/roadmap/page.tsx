@@ -11,7 +11,7 @@ const phases: Phase[] = [
     id: "01",
     title: "foundation",
     status: "completed",
-    description: "FableClaw goes live on Solana, powered by Claude Fable 5.",
+    description: "HoodClaw goes live on Solana, powered by Claude Fable 5.",
     items: [
       "autonomous agent loop: claim, buyback, burn, lp",
       "on-chain proof of work for every cycle",
@@ -38,7 +38,7 @@ const phases: Phase[] = [
     id: "03",
     title: "launch platform",
     status: "upcoming",
-    description: "deploy your own FableClaw-style agent for any token.",
+    description: "deploy your own HoodClaw-style agent for any token.",
     items: [
       "one-click company + token deployment",
       "custom strategy profiles per agent",
@@ -75,7 +75,7 @@ export default function RoadmapPage() {
         <div className="page-label">roadmap</div>
         <h1 className="page-title">what comes next</h1>
         <p className="page-sub">
-          {done} of {phases.length} phases shipped. FableClaw keeps getting sharper on Claude Fable 5.
+          {done} of {phases.length} phases shipped. HoodClaw keeps getting sharper on Claude Fable 5.
         </p>
       </section>
 

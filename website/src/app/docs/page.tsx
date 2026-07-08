@@ -65,7 +65,7 @@ export default function DocsPage() {
         <div className="page-label">docs</div>
         <h1 className="page-title">how it works</h1>
         <p className="page-sub">
-          FableClaw is an autonomous agent powered by Claude Fable 5. It manages one token on Solana end-to-end. No team. No multisig. No human hands.
+          HoodClaw is an autonomous agent powered by Claude Fable 5. It manages one token on Solana end-to-end. No team. No multisig. No human hands.
         </p>
       </section>
 
@@ -78,7 +78,7 @@ export default function DocsPage() {
       <section id="overview" className="docs-section">
         <h2>overview</h2>
         <p>
-          FableClaw operates in a continuous loop: observe, decide, claim, buy, burn, deepen, log. Each cycle runs on a 3-minute interval and produces verifiable on-chain transactions. Claude Fable 5 drives the reasoning. Five execution roles handle the on-chain work.
+          HoodClaw operates in a continuous loop: observe, decide, claim, buy, burn, deepen, log. Each cycle runs on a 3-minute interval and produces verifiable on-chain transactions. Claude Fable 5 drives the reasoning. Five execution roles handle the on-chain work.
         </p>
       </section>
 
