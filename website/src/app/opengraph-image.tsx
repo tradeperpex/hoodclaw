@@ -6,6 +6,8 @@ export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
 const ROLES = ["EXEC", "CLAIM", "BUYBACK", "BURN", "LP"];
+const HOOD_NEON = "#CCFF00";
+const HOOD_BLACK = "#000000";
 
 export default function OpenGraphImage() {
   return new ImageResponse(
@@ -18,19 +20,10 @@ export default function OpenGraphImage() {
           flexDirection: "column",
           justifyContent: "center",
           alignItems: "center",
-          background: "#080a0c",
+          background: HOOD_NEON,
           fontFamily: "ui-sans-serif, system-ui, sans-serif",
         }}
       >
-        <div
-          style={{
-            position: "absolute",
-            inset: 48,
-            border: "1px solid rgba(61, 255, 168, 0.2)",
-            borderRadius: 24,
-            display: "flex",
-          }}
-        />
         <div
           style={{
             display: "flex",
@@ -44,7 +37,7 @@ export default function OpenGraphImage() {
               fontSize: 72,
               fontWeight: 700,
               letterSpacing: "-0.04em",
-              color: "#eef2f6",
+              color: HOOD_BLACK,
             }}
           >
             {BRAND_NAME}
@@ -54,7 +47,8 @@ export default function OpenGraphImage() {
               fontSize: 22,
               letterSpacing: "0.08em",
               textTransform: "uppercase",
-              color: "#3dffa8",
+              color: HOOD_BLACK,
+              opacity: 0.65,
             }}
           >
             {AGENT_MODEL}
@@ -70,9 +64,9 @@ export default function OpenGraphImage() {
                   letterSpacing: "1px",
                   padding: "6px 14px",
                   borderRadius: 999,
-                  border: "1px solid rgba(61, 255, 168, 0.28)",
-                  color: a === "EXEC" ? "#041008" : "#3dffa8",
-                  background: a === "EXEC" ? "#3dffa8" : "transparent",
+                  border: `2px solid ${HOOD_BLACK}`,
+                  color: a === "EXEC" ? HOOD_NEON : HOOD_BLACK,
+                  background: a === "EXEC" ? HOOD_BLACK : "transparent",
                 }}
               >
                 {a}
@@ -85,7 +79,8 @@ export default function OpenGraphImage() {
               fontSize: 18,
               letterSpacing: "0.18em",
               textTransform: "uppercase",
-              color: "#5c6775",
+              color: HOOD_BLACK,
+              opacity: 0.45,
             }}
           >
             {BRAND_SHORT}

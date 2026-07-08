@@ -1,6 +1,10 @@
-export const LOGO_BG = "#0c1016";
-export const LOGO_CLAW = "#3dffa8";
-export const LOGO_CLAW_MID = "#00C805";
+/** Robinhood app-icon square: neon chartreuse + black */
+export const HOOD_NEON = "#CCFF00";
+export const HOOD_BLACK = "#000000";
+
+export const LOGO_BG = HOOD_NEON;
+export const LOGO_CLAW = HOOD_BLACK;
+export const LOGO_CLAW_MID = HOOD_BLACK;
 export const LOGO_RADIUS = 20;
 
 export const LOGO_MARK_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none" role="img" aria-label="HoodClaw">

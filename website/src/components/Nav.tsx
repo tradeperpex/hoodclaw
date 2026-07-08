@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import BrandLogo from "@/components/BrandLogo";
 import StatusPulse from "@/components/StatusPulse";
 import { AGENT_MODEL, X_URL, getPumpUrl } from "@/lib/brand";
 
@@ -22,7 +21,6 @@ export default function Nav() {
     <header className="nav-shell">
       <div className="nav-bar">
         <Link href="/" className="nav-brand">
-          <BrandLogo size={22} />
           <span>
             hood<span className="nav-brand-accent">claw</span>
           </span>
