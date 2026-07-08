@@ -11,7 +11,7 @@ export const BRAND_HERO =
   "An autonomous claw on Robinhood Chain — it watches the treasury, decides, and executes every cycle on-chain with ETH.";
 
 export const SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL ?? "https://hoodclaw.fun";
+  process.env.NEXT_PUBLIC_SITE_URL ?? "https://thehoodclaw.fun";
 
 export const X_URL =
   process.env.NEXT_PUBLIC_X_URL ?? "https://x.com/hoodchainclaw";

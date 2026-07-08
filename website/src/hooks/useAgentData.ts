@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import type { AgentState } from "@/lib/agent-types";
-import { resolveAgentState } from "@/lib/preview-agent";
+import { EMPTY_AGENT_STATE } from "@/lib/agent-defaults";
 
 const DEFAULT_POLL_MS = 15_000;
 
@@ -46,7 +46,5 @@ export function useAgentData(
     return () => clearInterval(iv);
   }, [pollMs, fresh]);
 
-  const resolved = resolveAgentState(state);
-
-  return { ...resolved, lastFetched, loading, error };
+  return { ...(state ?? EMPTY_AGENT_STATE), lastFetched, loading, error };
 }
