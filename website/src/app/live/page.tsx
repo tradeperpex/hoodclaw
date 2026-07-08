@@ -3,8 +3,9 @@
 import { useEffect, useMemo, useState } from "react";
 import { useLiveAgentData } from "@/hooks/useLiveAgentData";
 import type { AgentFeedEntry } from "@/lib/agent-types";
-import { BRAND_NAME, AGENT_MODEL } from "@/lib/brand";
-import { formatCompact, formatSol } from "@/lib/format-stats";
+import { BRAND_NAME, AGENT_MODEL, GAS_SYMBOL } from "@/lib/brand";
+import { EXPLORER_TX_URL } from "@/lib/chain";
+import { formatCompact, formatEth } from "@/lib/format-stats";
 
 const ACTION_AGENT: Record<string, string> = {
   Claim: "CLAIM",
@@ -58,7 +59,7 @@ function FeedRow({ entry, index }: { entry: AgentFeedEntry; index: number }) {
       {entry.strategy ? <p className="live-feed-strategy">strategy: {entry.strategy}</p> : null}
       {entry.sig ? (
         <a
-          href={`https://solscan.io/tx/${entry.sig}`}
+          href={`${EXPLORER_TX_URL}${entry.sig}`}
           target="_blank"
           rel="noopener noreferrer"
           className="feed-link"
@@ -136,8 +137,8 @@ export default function LivePage() {
       <section className="live-stats">
         <div className="live-stat live-stat-hero">
           <span className="live-stat-k">treasury</span>
-          <span className="live-stat-v">{formatSol(stats.treasurySol)}</span>
-          <span className="live-stat-u">SOL</span>
+          <span className="live-stat-v">{formatEth(stats.treasurySol)}</span>
+          <span className="live-stat-u">{GAS_SYMBOL}</span>
         </div>
         <div className="live-stat">
           <span className="live-stat-k">claimed</span>
@@ -156,8 +157,8 @@ export default function LivePage() {
           <span className="live-stat-v">{formatCompact(stats.totalBurned)}</span>
         </div>
         <div className="live-stat">
-          <span className="live-stat-k">lp sol</span>
-          <span className="live-stat-v">{formatSol(stats.totalLpSol)}</span>
+          <span className="live-stat-k">lp {GAS_SYMBOL.toLowerCase()}</span>
+          <span className="live-stat-v">{formatEth(stats.totalLpSol)}</span>
         </div>
       </section>
 

@@ -18,44 +18,43 @@ const AGENT_CARDS = [
     id:   "claim",
     tag:  "claim",
     name: "CLAIM · The Fee Hunter",
-    desc: "Monitors the pump.fun creator vault for accumulated fees via getCreatorVaultBalanceBothPrograms. When balance crosses the threshold, CLAIM fires collectCoinCreatorFeeInstructions and pulls SOL into the company wallet.",
+    desc: "Monitors the treasury wallet on Robinhood Chain for accumulated trading fees. When balance crosses the threshold, CLAIM collects ETH into the agent wallet.",
   },
   {
     id:   "buyback",
     tag:  "buyback",
     name: "BUYBACK · The Buyer",
-    desc: "Receives a SOL amount from EXEC and executes the purchase. Pre-graduation: bonding curve via buyInstructions. Post-graduation: PumpSwap AMM via buyQuoteInput. Optimizes for slippage and execution.",
+    desc: "Receives an ETH amount from EXEC and executes the purchase on Uniswap on Robinhood Chain. Optimizes for slippage and execution quality.",
   },
   {
     id:   "burn",
     tag:  "burn",
     name: "BURN · The Destroyer",
-    desc: "Takes tokens bought by BUYBACK and permanently removes them from supply using createBurnInstruction via SPL token. Irreversible. No recovery. Every cycle ends with fewer tokens in existence.",
+    desc: "Takes tokens bought by BUYBACK and permanently removes them from supply via ERC-20 burn. Irreversible. Every cycle can shrink supply.",
   },
   {
     id:   "lp",
     tag:  "lp",
     name: "LP · The Pooler",
-    desc: "Activates post-graduation only. When EXEC's strategy allocates to LP, this agent calls depositInstructions on the canonical PumpSwap pool, deepening liquidity with SOL from the cycle treasury.",
+    desc: "When EXEC allocates to LP, this agent adds ETH liquidity to the Uniswap pool on Robinhood Chain and deepens the book.",
   },
 ];
 
 const STEPS = [
-  { num: "01", title: "check claimable fees",  agent: "CLAIM",   body: "getCreatorVaultBalanceBothPrograms reads pending creator fees. Below threshold → skip cycle." },
-  { num: "02", title: "claim fees",             agent: "CLAIM",   body: "collectCoinCreatorFeeInstructions moves accumulated SOL into the company wallet." },
-  { num: "03", title: "decide strategy",        agent: "EXEC",    body: "Weighted random: burn-heavy, balanced, lp-focus, full-burn, full-lp. Pre-graduation → full buyback." },
-  { num: "04", title: "graduation check",       agent: "EXEC",    body: "Bonding curve complete flag + canonicalPumpPoolPda distinguish curve from PumpSwap. Routes BUYBACK accordingly." },
-  { num: "05", title: "buyback",                agent: "BUYBACK", body: "buyInstructions (curve) or buyQuoteInput (PumpSwap). Tokens land in company wallet." },
-  { num: "06", title: "burn",                   agent: "BURN",    body: "createBurnInstruction permanently removes purchased tokens from supply." },
-  { num: "07", title: "optional lp add",        agent: "LP",      body: "Post-graduation only. depositInstructions on the canonical PumpSwap pool when strategy allocates to LP." },
+  { num: "01", title: "check claimable fees",  agent: "CLAIM",   body: "Reads pending ETH fees in the treasury. Below threshold → skip cycle." },
+  { num: "02", title: "claim fees",             agent: "CLAIM",   body: "Collects accumulated trading fees into the agent wallet on Robinhood Chain." },
+  { num: "03", title: "decide strategy",        agent: "EXEC",    body: "Weighted random: burn-heavy, balanced, lp-focus, full-burn, full-lp." },
+  { num: "04", title: "route execution",        agent: "EXEC",    body: "Splits the cycle budget across buyback and LP based on pool state and recent volume." },
+  { num: "05", title: "buyback",                agent: "BUYBACK", body: "Swaps ETH for tokens on Uniswap. Tokens land in the agent wallet." },
+  { num: "06", title: "burn",                   agent: "BURN",    body: "ERC-20 burn permanently removes purchased tokens from supply." },
+  { num: "07", title: "optional lp add",        agent: "LP",      body: "Adds ETH liquidity to the Uniswap pool when strategy allocates to LP." },
   { num: "08", title: "log reasoning",          agent: "EXEC",    body: "Reasoning entry written to Supabase. Captures strategy, action taken, and market observation." },
 ];
 
 const SDKS = [
-  { pkg: "@solana/web3.js",          desc: "connection, transactions, signing." },
-  { pkg: "@solana/spl-token",        desc: "spl token / token-2022, burn, atas." },
-  { pkg: "@pump-fun/pump-sdk",       desc: "creator-fee collection, bonding curve buys." },
-  { pkg: "@pump-fun/pump-swap-sdk",  desc: "pumpswap amm swaps and lp post-graduation." },
+  { pkg: "viem", desc: "Robinhood Chain RPC, wallet, contract calls." },
+  { pkg: "Uniswap v3", desc: "ETH → token swaps and LP on Robinhood Chain." },
+  { pkg: "@supabase/supabase-js", desc: "public stats feed and reasoning log." },
 ];
 
 export default function DocsPage() {
@@ -65,7 +64,7 @@ export default function DocsPage() {
         <div className="page-label">docs</div>
         <h1 className="page-title">how it works</h1>
         <p className="page-sub">
-          HoodClaw is an autonomous agent powered by Claude Fable 5. It manages one token on Solana end-to-end. No team. No multisig. No human hands.
+          HoodClaw is an autonomous agent powered by Claude Fable 5. It manages one token on Robinhood Chain end-to-end with ETH. No team. No multisig. No human hands.
         </p>
       </section>
 
@@ -78,7 +77,7 @@ export default function DocsPage() {
       <section id="overview" className="docs-section">
         <h2>overview</h2>
         <p>
-          HoodClaw operates in a continuous loop: observe, decide, claim, buy, burn, deepen, log. Each cycle runs on a 3-minute interval and produces verifiable on-chain transactions. Claude Fable 5 drives the reasoning. Five execution roles handle the on-chain work.
+          HoodClaw operates in a continuous loop: observe, decide, claim, buy, burn, deepen, log. Each cycle produces verifiable on-chain transactions on Robinhood Chain. Claude Fable 5 drives the reasoning. Five execution roles handle the on-chain work.
         </p>
       </section>
 

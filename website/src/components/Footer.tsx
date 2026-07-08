@@ -1,8 +1,8 @@
 import Link from "next/link";
-import { BRAND_NAME, X_URL, getPumpUrl } from "@/lib/brand";
+import { BRAND_NAME, X_URL, getTradeUrl } from "@/lib/brand";
 
 export default function Footer() {
-  const pumpUrl = getPumpUrl();
+  const tradeUrl = getTradeUrl();
 
   return (
     <footer className="site-foot">
@@ -16,7 +16,7 @@ export default function Footer() {
         <a href={X_URL} target="_blank" rel="noopener noreferrer">
           x
         </a>
-        <a href={pumpUrl} target="_blank" rel="noopener noreferrer">
+        <a href={tradeUrl} target="_blank" rel="noopener noreferrer">
           buy
         </a>
       </div>

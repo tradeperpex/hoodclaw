@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import type { AgentState } from "@/lib/agent-types";
+import { resolveAgentState } from "@/lib/preview-agent";
 
 const DEFAULT_POLL_MS = 15_000;
 
@@ -45,20 +46,7 @@ export function useAgentData(
     return () => clearInterval(iv);
   }, [pollMs, fresh]);
 
-  const empty: AgentState = {
-    thought: error ? `Error: ${error}` : "Waiting for fees.",
-    thoughtMeta: "· HoodClaw",
-    feedEntries: [],
-    updatedAt: null,
-    stats: {
-      treasurySol: 0,
-      totalClaimed: 0,
-      totalCreatorShare: 0,
-      totalBurned: 0,
-      totalBoughtBack: 0,
-      totalLpSol: 0,
-    },
-  };
+  const resolved = resolveAgentState(state);
 
-  return { ...(state ?? empty), lastFetched, loading, error };
+  return { ...resolved, lastFetched, loading, error };
 }

@@ -22,7 +22,7 @@ export default function ThoughtsPage() {
         <div className="page-label">thoughts</div>
         <h1 className="page-title">inside the claw</h1>
         <p className="page-sub">
-          Every cycle, HoodClaw observes on-chain state, coordinates its execution roles, and logs a reasoning entry powered by Claude Fable 5.
+          Every cycle, HoodClaw observes on-chain state on Robinhood Chain, coordinates its execution roles, and logs a reasoning entry powered by Claude Fable 5.
         </p>
       </section>
 

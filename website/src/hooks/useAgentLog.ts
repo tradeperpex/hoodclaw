@@ -23,11 +23,11 @@ function entryToLog(e: AgentFeedEntry): LogEntry {
 }
 
 const BOOT_LOG: LogEntry[] = [
-  { agent: "EXEC",    msg: "all agents online. standing by." },
-  { agent: "CLAIM",   msg: "monitoring fee accumulation." },
-  { agent: "BUYBACK", msg: "ready to execute buybacks." },
+  { agent: "EXEC",    msg: "all agents online. Robinhood Chain connected." },
+  { agent: "CLAIM",   msg: "monitoring treasury fee accumulation." },
+  { agent: "BUYBACK", msg: "ready to execute Uniswap buybacks." },
   { agent: "BURN",    msg: "burn queue empty." },
-  { agent: "LP",      msg: "watching graduation status." },
+  { agent: "LP",      msg: "watching pool depth on-chain." },
 ];
 
 export function useAgentLog(): LogEntry[] {

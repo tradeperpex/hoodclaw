@@ -11,7 +11,7 @@ const phases: Phase[] = [
     id: "01",
     title: "foundation",
     status: "completed",
-    description: "HoodClaw goes live on Solana, powered by Claude Fable 5.",
+    description: "HoodClaw goes live on Robinhood Chain, powered by Claude Fable 5.",
     items: [
       "autonomous agent loop: claim, buyback, burn, lp",
       "on-chain proof of work for every cycle",

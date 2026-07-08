@@ -5,21 +5,23 @@ import { useAgentData } from "@/hooks/useAgentData";
 import { useAgentLog } from "@/hooks/useAgentLog";
 import StatusPulse from "@/components/StatusPulse";
 import {
+  AGENT_MODEL,
   BRAND_HERO,
   BRAND_NAME,
   BRAND_SHORT,
-  AGENT_MODEL,
+  GAS_SYMBOL,
+  NETWORK_LABEL,
   X_URL,
-  getPumpUrl,
+  getTradeUrl,
 } from "@/lib/brand";
-import { formatCompact, formatSol } from "@/lib/format-stats";
+import { formatCompact, formatEth } from "@/lib/format-stats";
 
 export const AGENTS = [
   { id: "EXEC", label: "exec", desc: "Reads state and picks strategy each cycle." },
-  { id: "CLAIM", label: "claim", desc: "Collects creator fees from the vault." },
-  { id: "BUYBACK", label: "buyback", desc: "Executes token purchases on-chain." },
+  { id: "CLAIM", label: "claim", desc: "Collects trading fees into the treasury wallet." },
+  { id: "BUYBACK", label: "buyback", desc: "Executes token buys on Uniswap." },
   { id: "BURN", label: "burn", desc: "Permanently removes tokens from supply." },
-  { id: "LP", label: "lp", desc: "Deepens liquidity after graduation." },
+  { id: "LP", label: "lp", desc: "Deepens liquidity on Robinhood Chain." },
 ] as const;
 
 export type AgentId = (typeof AGENTS)[number]["id"];
@@ -27,19 +29,19 @@ export type AgentId = (typeof AGENTS)[number]["id"];
 export default function Home() {
   const { stats, thought } = useAgentData();
   const log = useAgentLog();
-  const pumpUrl = getPumpUrl();
+  const tradeUrl = getTradeUrl();
 
   return (
     <div className="home">
       <section className="hero hero-center">
-        <p className="hero-eyebrow">Solana / {AGENT_MODEL}</p>
+        <p className="hero-eyebrow">{NETWORK_LABEL} / {AGENT_MODEL}</p>
         <h1 className="hero-mega">
           hood<span className="hero-accent">claw</span>
         </h1>
         <p className="hero-lede">{BRAND_HERO}</p>
 
-        <a className="hero-buy" href={pumpUrl} target="_blank" rel="noopener noreferrer">
-          buy on pump ↗
+        <a className="hero-buy" href={tradeUrl} target="_blank" rel="noopener noreferrer">
+          buy on uniswap ↗
         </a>
       </section>
 
@@ -47,17 +49,17 @@ export default function Home() {
 
       <section className="home-section home-section-center">
         <StatusPulse label="running" />
-        <p className="mega-stat">{formatSol(stats.treasurySol)}</p>
-        <p className="mega-stat-label">SOL in treasury</p>
+        <p className="mega-stat">{formatEth(stats.treasurySol)}</p>
+        <p className="mega-stat-label">{GAS_SYMBOL} in treasury</p>
       </section>
 
       <div className="section-rule" aria-hidden="true" />
 
       <section className="home-section home-section-narrow">
         <p className="section-copy">
-          {BRAND_NAME} runs on {AGENT_MODEL}. Every cycle it scans the vault, decides
-          allocation, and routes claim, buyback, burn, and LP on-chain. No team, no multisig,
-          no one else in the loop.
+          {BRAND_NAME} runs on {AGENT_MODEL} on Robinhood Chain. Every cycle it scans the
+          treasury, decides allocation, and routes claim, buyback, burn, and LP on-chain with ETH.
+          No team, no multisig, no one else in the loop.
         </p>
         <p className="section-copy">
           It acts direct and methodical: observe the state, commit to a strategy, execute,
@@ -69,7 +71,7 @@ export default function Home() {
 
       <section className="big-stats">
         <div className="big-stat">
-          <p className="big-stat-v">{formatSol(stats.totalClaimed)}</p>
+          <p className="big-stat-v">{formatEth(stats.totalClaimed)}</p>
           <p className="big-stat-k">claimed</p>
         </div>
         <div className="big-stat">
@@ -77,7 +79,7 @@ export default function Home() {
           <p className="big-stat-k">burned</p>
         </div>
         <div className="big-stat">
-          <p className="big-stat-v big-stat-v-accent">{formatSol(stats.totalBoughtBack)}</p>
+          <p className="big-stat-v big-stat-v-accent">{formatEth(stats.totalBoughtBack)}</p>
           <p className="big-stat-k">bought back</p>
         </div>
       </section>
@@ -128,7 +130,7 @@ export default function Home() {
             <div className="tlog-line">
               <span className="tlog-who tlog-who-exec">EXEC</span>
               <span className="tlog-sep">›</span>
-              <span className="tlog-msg">waiting for fees.</span>
+              <span className="tlog-msg">scanning treasury on Robinhood Chain.</span>
             </div>
           )}
         </div>
@@ -149,7 +151,7 @@ export default function Home() {
         <a href={X_URL} target="_blank" rel="noopener noreferrer">
           x
         </a>
-        <a className="buy" href={pumpUrl} target="_blank" rel="noopener noreferrer">
+        <a className="buy" href={tradeUrl} target="_blank" rel="noopener noreferrer">
           buy ↗
         </a>
       </nav>

@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import type { AgentFeedEntry } from "@/lib/agent-types";
+import { useAgentData } from "@/hooks/useAgentData";
+import { EXPLORER_TX_URL } from "@/lib/chain";
 
 function shortSig(sig: string) {
   return sig.slice(0, 4) + "…" + sig.slice(-4);
@@ -9,30 +9,19 @@ function shortSig(sig: string) {
 
 const ACTION_AGENT: Record<string, string> = {
   "Claimed fees": "CLAIM",
-  "Claim":        "CLAIM",
-  "Buyback":      "BUYBACK",
-  "Burned tokens":"BURN",
-  "Added LP":     "LP",
-  "Scanned":      "EXEC",
+  Claim: "CLAIM",
+  Buyback: "BUYBACK",
+  "Burned tokens": "BURN",
+  "Added LP": "LP",
+  Scanned: "EXEC",
 };
 
 export default function ProofPage() {
-  const [entries, setEntries] = useState<AgentFeedEntry[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { feedEntries, loading } = useAgentData();
 
-  useEffect(() => {
-    fetch("/api/agent-stats")
-      .then((r) => r.json())
-      .then((data) => {
-        setEntries(data.feedEntries ?? []);
-        setLoading(false);
-      })
-      .catch(() => setLoading(false));
-  }, []);
-
-  const actions = entries.filter((e) => e.action !== "Thought");
+  const actions = feedEntries.filter((e) => e.action !== "Thought");
   const txs = actions.filter((e) => e.sig).length;
-  const burns = actions.filter((e) => e.action === "Burned tokens").length;
+  const burns = actions.filter((e) => e.action === "Burned tokens" || e.action === "Burn").length;
   const buybacks = actions.filter((e) => e.action === "Buyback").length;
 
   return (
@@ -41,7 +30,8 @@ export default function ProofPage() {
         <div className="page-label">proof</div>
         <h1 className="page-title">on-chain activity</h1>
         <p className="page-sub">
-          Every transaction HoodClaw executes is recorded on Solana and verifiable by anyone. Powered by Claude Fable 5, every action logged.
+          Every transaction HoodClaw executes on Robinhood Chain is verifiable on Blockscout.
+          Powered by Claude Fable 5 — every action logged.
         </p>
       </section>
 
@@ -73,7 +63,7 @@ export default function ProofPage() {
                   <div className="feed-detail">{entry.detail}</div>
                   {entry.sig && (
                     <a
-                      href={`https://solscan.io/tx/${entry.sig}`}
+                      href={`${EXPLORER_TX_URL}${entry.sig}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="feed-link"

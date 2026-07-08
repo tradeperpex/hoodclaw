@@ -109,7 +109,7 @@ More: **read the log, check the tx, follow the claw.**
 ## Follow along
 
 - **Website:** [hoodclaw.fun](https://hoodclaw.fun)
-- **X:** [@hoodclaw](https://x.com/hoodclaw)
+- **X:** [@hoodchainclaw](https://x.com/hoodchainclaw)
 
 HoodClaw runs. It thinks. It acts. It logs.
 

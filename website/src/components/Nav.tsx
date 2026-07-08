@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import StatusPulse from "@/components/StatusPulse";
-import { AGENT_MODEL, X_URL, getPumpUrl } from "@/lib/brand";
+import { AGENT_MODEL, X_URL, getTradeUrl } from "@/lib/brand";
 
 const LINKS = [
   { href: "/", label: "home" },
@@ -15,7 +15,7 @@ const LINKS = [
 
 export default function Nav() {
   const pathname = usePathname();
-  const pumpUrl = getPumpUrl();
+  const tradeUrl = getTradeUrl();
 
   return (
     <header className="nav-shell">
@@ -60,7 +60,7 @@ export default function Nav() {
           <StatusPulse label="active" />
           <a
             className="nav-cta"
-            href={pumpUrl}
+            href={tradeUrl}
             target="_blank"
             rel="noopener noreferrer"
           >
